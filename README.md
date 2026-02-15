@@ -1,75 +1,67 @@
-# Nuxt Minimal Starter
+# 🚀 Portobit - Micro-SaaS Showcase Portfolio
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**Portobit** adalah platform Micro-SaaS yang memungkinkan freelancer, developer, dan kreator untuk membangun portofolio profesional dalam hitungan detik. Dengan fitur _Live Preview_, pengguna dapat melihat perubahan tampilan secara real-time saat mereka mengisi data.
 
-## Setup
+## 🛠️ Tech Stack
 
-Make sure to install dependencies:
+- **Framework:** [Nuxt 3](https://nuxt.com/) (Vue.js)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Database & Auth:** [Supabase](https://supabase.com/)
+- **State Management:** [Pinia](https://pinia.vuejs.org/)
+- **Deployment:** Vercel / Netlify
 
-```bash
-# npm
-npm install
+---
 
-# pnpm
-pnpm install
+## 🏗️ Project Structure
 
-# yarn
-yarn install
-
-# bun
-bun install
+```text
+portobit/
+├── components/          # Reusable UI Components
+│   ├── dashboard/       # Editor & Input components
+│   ├── preview/         # Live Preview components
+│   └── shared/          # Global UI (Button, Input, etc)
+├── layouts/             # Page Layouts (Default, Dashboard)
+├── pages/               # Application Routes
+│   ├── index.vue        # Landing Page
+│   ├── dashboard/       # User Dashboard (Private)
+│   └── [username].vue   # Public Portfolio (SSR)
+├── server/              # Server Routes & API
+├── stores/              # Pinia Stores (State Management)
+└── supabase/            # Database Schema & Migrations
 ```
 
-## Development Server
+## 📋 Features & Roadmap
 
-Start the development server on `http://localhost:3000`:
+### Phase 1: Core Engine
 
-```bash
-# npm
-npm run dev
+- [x] Setup Nuxt 4 & Tailwind CSS
+- [ ] Live Preview Editor (v-model & Pinia)
+- [ ] Dynamic Routing /[username]
 
-# pnpm
-pnpm dev
+### Phase 2: Database & Auth
 
-# yarn
-yarn dev
+- [ ] Supabase Auth (Google & GitHub)
+- [ ] CRUD Profile & Projects
+- [ ] Image Upload (Supabase Storage)
 
-# bun
-bun run dev
-```
+### Phase 3: Customization
 
-## Production
+- [ ] Multi-template Support
+- [ ] Custom Theme Color Picker
+- [ ] Drag & Drop Reorder Projects
 
-Build the application for production:
+### Phase 4: Analytics & SEO
 
-```bash
-# npm
-npm run build
+- [ ] SEO Meta Tags for each user
+- [ ] Simple Visitor Analytics
+- [ ] Export to PDF feature
 
-# pnpm
-pnpm build
+## 🗄️ Skema Database (Overview)
 
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+| table         | keterangan                                             |
+| ------------- | ------------------------------------------------------ |
+| profiles      | Data utama user (username, bio, avatar, status PRO).   |
+| projects      | Daftar karya (judul, deskripsi, thumbnail, urutan).    |
+| plans         | Definisi paket harga (Free, Monthly, Yearly).          |
+| subscriptions | Log transaksi, status langganan, & tanggal kadaluarsa. |
+| analytics     | Data kunjungan profil (unique views, referer).         |
