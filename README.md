@@ -1,67 +1,78 @@
-# 🚀 Portobit - Micro-SaaS Showcase Portfolio
+# 🚀 Portobit - Micro-SaaS Portfolio Builder
 
-**Portobit** adalah platform Micro-SaaS yang memungkinkan freelancer, developer, dan kreator untuk membangun portofolio profesional dalam hitungan detik. Dengan fitur _Live Preview_, pengguna dapat melihat perubahan tampilan secara real-time saat mereka mengisi data.
+**Portobit** adalah aplikasi Software‑as‑a‑Service (SaaS) untuk membuat portofolio online instan. Pengguna mendaftar (gratis atau berlangganan) lalu mengisi data proyek, bio dan tema; perubahan langsung terlihat melalui _Live Preview_. Portobit ditujukan bagi freelancer, developer, dan kreator yang ingin showcase karya tanpa repot setup.
+
+> 📝 Backend multi‑tenant dengan model free/paid, _upgrade ke PRO_ akan membuka fitur kustomisasi dan statistik.
 
 ## 🛠️ Tech Stack
 
-- **Framework:** [Nuxt 3](https://nuxt.com/) (Vue.js)
+_Portobit dibangun dengan fokus skalabilitas dan pengembangan cepat; seluruh komponen cocok untuk multi‑tenant SaaS._
+
+- **Framework:** [Nuxt](https://nuxt.com/) (Vue.js)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Database & Auth:** [Supabase](https://supabase.com/)
 - **State Management:** [Pinia](https://pinia.vuejs.org/)
-- **Deployment:** Vercel / Netlify
+- **Deployment:** Vercel
 
 ---
 
-## 🏗️ Project Structure
+## 🚀 Quickstart (Development)
 
-```text
-portobit/
-├── components/          # Reusable UI Components
-│   ├── dashboard/       # Editor & Input components
-│   ├── preview/         # Live Preview components
-│   └── shared/          # Global UI (Button, Input, etc)
-├── layouts/             # Page Layouts (Default, Dashboard)
-├── pages/               # Application Routes
-│   ├── index.vue        # Landing Page
-│   ├── dashboard/       # User Dashboard (Private)
-│   └── [username].vue   # Public Portfolio (SSR)
-├── server/              # Server Routes & API
-├── stores/              # Pinia Stores (State Management)
-└── supabase/            # Database Schema & Migrations
-```
+1. Pastikan Node.js 18+ dan pnpm atau npm terpasang.
+2. Clone repositori dan install dependensi:
+   ```bash
+   git clone https://github.com/dennyshuda/portobit.git
+   cd portobit
+   pnpm install
+   ```
+3. Siapkan variabel lingkungan (`.env`) berbasis `.env.example` dengan kredensial Supabase.
+4. Jalankan server lokal:
+   ```bash
+   pnpm dev
+   ```
+5. Buka http://localhost:3000 dan daftar akun baru untuk mencoba alur SaaS.
 
-## 📋 Features & Roadmap
+## 💡 How It Works (SaaS Flow)
 
-### Phase 1: Core Engine
+1. **User Sign‑Up:** Pengguna membuat akun via Google atau email.
+2. **Portfolio Editor:** Di dashboard, mereka memasukkan info profil, menambahkan proyek, memilih template.
+3. **Live Preview:** Setiap perubahan langsung tampil di pratinjau; halaman publik di `/<username>`.
+4. **Subscription:** Akun default gratis; opsi `PRO` tersedia untuk fitur tambahan.
+5. **Admin & Monitoring:** Backend menyimpan data multi‑tenant; ada tabel `plans`, `subscriptions`, dan `analytics`.
 
-- [x] Setup Nuxt 4 & Tailwind CSS
-- [ ] Live Preview Editor (v-model & Pinia)
-- [ ] Dynamic Routing /[username]
+---
 
-### Phase 2: Database & Auth
+## 🤝 Cara Kontribusi
 
-- [ ] Supabase Auth (Google & GitHub)
-- [ ] CRUD Profile & Projects
-- [ ] Image Upload (Supabase Storage)
+Terima kasih telah berminat berkontribusi pada **Portobit**! Berikut beberapa langkah sederhana untuk membantu kamu memulai:
 
-### Phase 3: Customization
+1. **Fork** repositori ini ke akun GitHub-mu.
+2. **Clone** hasil fork ke mesin lokal:
+   ```bash
+   git clone https://github.com/<username>/portobit.git
+   ```
+3. **Buat branch** baru berdasarkan fitur/bug yang ingin kamu kerjakan:
+   ```bash
+   git checkout -b fitur/nama-fitur-atau-bugfix
+   ```
+4. **Kerjakan perubahan** di branch tersebut. Pastikan untuk menambahkan atau mengupdate dokumen bila diperlukan.
+5. **Commit** dengan pesan jelas dan bermakna:
+   ```bash
+   git add .
+   git commit -m "Deskripsi singkat perubahan"
+   ```
+6. **Push** branch ke GitHub fork-mu:
+   ```bash
+   git push origin fitur/nama-fitur-atau-bugfix
+   ```
+7. Buat **Pull Request** ke branch `main` di repositori utama. Jelaskan apa yang kamu ubah dan alasannya.
 
-- [ ] Multi-template Support
-- [ ] Custom Theme Color Picker
-- [ ] Drag & Drop Reorder Projects
+> ⚠️ Sebelum mengirim PR, pastikan semua perubahan lulus pengecekan (lint/test) dan bahwa kode tetap mengikuti gaya proyek.
 
-### Phase 4: Analytics & SEO
+### 📌 Aturan tambahan
 
-- [ ] SEO Meta Tags for each user
-- [ ] Simple Visitor Analytics
-- [ ] Export to PDF feature
+- Jaga agar commit kecil dan fokus pada satu perubahan.
+- Sertakan screenshot atau video jika kontribusimu berhubungan dengan UI.
+- Gunakan bahasa Indonesia atau Inggris yang mudah dimengerti.
 
-## 🗄️ Skema Database (Overview)
-
-| table         | keterangan                                             |
-| ------------- | ------------------------------------------------------ |
-| profiles      | Data utama user (username, bio, avatar, status PRO).   |
-| projects      | Daftar karya (judul, deskripsi, thumbnail, urutan).    |
-| plans         | Definisi paket harga (Free, Monthly, Yearly).          |
-| subscriptions | Log transaksi, status langganan, & tanggal kadaluarsa. |
-| analytics     | Data kunjungan profil (unique views, referer).         |
+Kami sangat menghargai setiap kontribusi — baik itu perbaikan bug, fitur baru, dokumentasi, atau ide!
