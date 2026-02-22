@@ -57,7 +57,7 @@ export const usePortfolioStore = defineStore("portfolio", {
 					avatar_url: data?.avatar_url || "",
 					theme_color: data?.theme_color || "#10b981",
 					views_count: data?.views_count || 0,
-					template_name: "",
+					template_name: data?.template_name || "",
 				};
 
 				this.projects = data?.projects || [];

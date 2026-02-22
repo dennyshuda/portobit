@@ -21,6 +21,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_pro: boolean | null
+          template_name: string | null
           theme_color: string | null
           updated_at: string | null
           username: string
@@ -32,6 +33,7 @@ export type Database = {
           full_name?: string | null
           id: string
           is_pro?: boolean | null
+          template_name?: string | null
           theme_color?: string | null
           updated_at?: string | null
           username: string
@@ -43,6 +45,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_pro?: boolean | null
+          template_name?: string | null
           theme_color?: string | null
           updated_at?: string | null
           username?: string
