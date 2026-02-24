@@ -19,8 +19,8 @@ const updateSeo = (data: any) => {
 	useSeoMeta({
 		title: `${data.full_name} | Portobit`,
 		ogTitle: `${data.full_name} - Portfolio`,
-		description: data.bio || `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
-		ogDescription: data.bio || `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
+		description: `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
+		ogDescription: `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
 		ogImage: data.avatar_url,
 		twitterCard: "summary_large_image",
 		twitterTitle: `${data.full_name} | Portobit`,
