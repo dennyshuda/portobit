@@ -3,9 +3,6 @@ const props = defineProps<{
 	profile: any;
 	projects: any[];
 }>();
-
-console.log(props.profile);
-console.log(props.projects);
 </script>
 
 <template>
