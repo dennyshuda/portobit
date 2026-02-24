@@ -4,7 +4,10 @@ import Modern from "~/components/templates/modern.vue";
 import Terminal from "~/components/templates/terminal.vue";
 import Creative from "~/components/templates/creative.vue";
 
-definePageMeta({ layout: false });
+definePageMeta({
+	layout: false,
+});
+
 const route = useRoute();
 const supabase = useSupabaseClient();
 
