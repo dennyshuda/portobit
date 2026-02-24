@@ -84,5 +84,101 @@
 				</p>
 			</div>
 		</section>
+
+		<section class="py-20 md:py-32 bg-slate-100/70">
+			<div class="max-w-7xl mx-auto px-6">
+				<div class="text-center max-w-2xl mx-auto mb-16">
+					<h2 class="text-4xl md:text-6xl font-black tracking-tighter">
+						Pilih Paket yang <span class="text-emerald-500">Tepat Untukmu.</span>
+					</h2>
+					<p class="text-slate-500 mt-6 text-lg leading-relaxed">
+						Mulai gratis selamanya. Upgrade ke Pro untuk fitur lebih canggih saat kamu sudah siap.
+					</p>
+				</div>
+
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto items-start">
+					<div
+						class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm h-full flex flex-col"
+					>
+						<h3 class="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">
+							Starter
+						</h3>
+						<p class="text-5xl font-black text-slate-900 mb-2">Gratis</p>
+						<p class="text-slate-500 mb-8">Untuk memulai dan memamerkan karyamu secara instan.</p>
+						<ul class="space-y-4 mb-10 text-slate-600 flex-1">
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>1 Portofolio</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>Unlimited Projects</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>Pilihan Template Dasar</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>Analitik Pengunjung</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>Branding Portobit</span>
+							</li>
+						</ul>
+						<NuxtLink
+							to="/login"
+							class="w-full text-center bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-600 transition-all"
+						>
+							Mulai Gratis
+						</NuxtLink>
+					</div>
+
+					<div
+						class="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-2xl shadow-slate-900/20 relative border-4 border-slate-900 transform lg:scale-105"
+					>
+						<div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
+							<div
+								class="bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full"
+							>
+								Paling Populer
+							</div>
+						</div>
+						<h3 class="text-sm font-bold text-amber-400 uppercase tracking-widest mb-2">Pro</h3>
+						<p class="text-5xl font-black mb-2">Segera</p>
+						<p class="text-slate-400 mb-8">Fitur lengkap untuk para profesional sejati.</p>
+						<ul class="space-y-4 mb-10 text-slate-300 flex-1">
+							<li class="flex items-center gap-3 font-bold">
+								<Icon name="ph:sparkle-fill" class="text-amber-400" size="20" />
+								<span>Semua di paket Starter, plus:</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>Template Premium</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<Icon name="ph:check-circle-fill" class="text-emerald-500" size="20" />
+								<span>Tanpa Branding Portobit</span>
+							</li>
+							<li class="flex items-center gap-3 opacity-50">
+								<Icon name="ph:clock-countdown-fill" class="text-slate-400" size="20" />
+								<span>Custom Domain (segera)</span>
+							</li>
+							<li class="flex items-center gap-3 opacity-50">
+								<Icon name="ph:clock-countdown-fill" class="text-slate-400" size="20" />
+								<span>Analitik Mendalam (segera)</span>
+							</li>
+						</ul>
+						<button
+							disabled
+							class="w-full text-center bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							Segera Hadir
+						</button>
+					</div>
+				</div>
+			</div>
+		</section>
 	</div>
 </template>

@@ -20,9 +20,9 @@ const user = useSupabaseUser();
 
 				<div class="hidden md:flex items-center gap-8">
 					<NuxtLink
-						to="#features"
+						to="/template"
 						class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors"
-						>Fitur</NuxtLink
+						>Templates</NuxtLink
 					>
 					<NuxtLink
 						to="#pricing"
@@ -74,8 +74,8 @@ const user = useSupabaseUser();
 					class="md:hidden mt-4 bg-white border border-slate-200 rounded-[2rem] p-6 shadow-2xl"
 				>
 					<div class="flex flex-col gap-4">
-						<NuxtLink @click="isOpen = false" to="#features" class="font-bold text-slate-600"
-							>Fitur</NuxtLink
+						<NuxtLink @click="isOpen = false" to="/template" class="font-bold text-slate-600"
+							>Templates</NuxtLink
 						>
 						<NuxtLink @click="isOpen = false" to="#pricing" class="font-bold text-slate-600"
 							>Harga</NuxtLink
