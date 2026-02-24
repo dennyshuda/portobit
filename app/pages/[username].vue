@@ -15,22 +15,20 @@ const profile = ref<any>(null);
 const projects = ref<any[]>([]);
 const loading = ref(true);
 
-// Fungsi untuk set SEO Meta setelah data profile tersedia
 const updateSeo = (data: any) => {
 	useSeoMeta({
 		title: `${data.full_name} | Portobit`,
 		ogTitle: `${data.full_name} - Portfolio`,
-		description: data.bio || `Cek portofolio profesional ${data.full_name} di Portobit.`,
-		ogDescription: data.bio || `Cek portofolio profesional ${data.full_name} di Portobit.`,
+		description: data.bio || `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
+		ogDescription: data.bio || `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
 		ogImage: data.avatar_url,
 		twitterCard: "summary_large_image",
 		twitterTitle: `${data.full_name} | Portobit`,
 		twitterDescription: data.bio,
 		twitterImage: data.avatar_url,
+		keywords: `${data.full_name}, portofolio ${data.full_name}, portobit, ${data.username}`,
 	});
 };
-
-// ...
 
 const updateViews = async (profileId: string) => {
 	const storageKey = `viewed_${profileId}`;
