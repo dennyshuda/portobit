@@ -191,7 +191,7 @@ export const usePortfolioStore = defineStore("portfolio", {
 			const userId = user.value?.sub;
 
 			if (!userId) {
-				alert("User tidak ditemukan!");
+				toast.error("User tidak ditemukan!");
 				this.isLoading = false;
 				return;
 			}
@@ -271,9 +271,9 @@ export const usePortfolioStore = defineStore("portfolio", {
 				}
 
 				this.hasUnsavedChanges = false;
-				alert("Semua perubahan berhasil disimpan!");
+				toast.success("Semua perubahan project berhasil disimpan!");
 			} catch (err: any) {
-				alert("Gagal menyimpan: " + err.message);
+				toast.error("Gagal menyimpan project", { description: err.message });
 			} finally {
 				this.isLoading = false;
 			}
