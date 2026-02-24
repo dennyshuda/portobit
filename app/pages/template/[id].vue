@@ -58,7 +58,13 @@ const dummyData = {
 			/>
 
 			<TemplatesMinimalist
-				v-if="templateId === 'minimal'"
+				v-if="templateId === 'minimalist'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
+
+			<TemplatesCreative
+				v-if="templateId === 'creative'"
 				:profile="dummyData.profile"
 				:projects="dummyData.projects"
 			/>

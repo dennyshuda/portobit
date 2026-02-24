@@ -2,6 +2,7 @@
 import Minimalist from "~/components/templates/minimalist.vue";
 import Modern from "~/components/templates/modern.vue";
 import Terminal from "~/components/templates/terminal.vue";
+import Creative from "~/components/templates/creative.vue";
 
 definePageMeta({ layout: false });
 const route = useRoute();
@@ -29,7 +30,6 @@ const updateSeo = (data: any) => {
 // ...
 
 const updateViews = async (profileId: string) => {
-	// 1. Cek di localStorage supaya tidak spam (biar refresh berkali-kali ga nambah terus)
 	const storageKey = `viewed_${profileId}`;
 	const isViewed = localStorage.getItem(storageKey);
 
@@ -86,6 +86,7 @@ const templateComponents: Record<string, any> = {
 	modern: Modern,
 	terminal: Terminal,
 	minimalist: Minimalist,
+	creative: Creative,
 };
 
 const activeTemplate = computed(() => {

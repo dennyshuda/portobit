@@ -23,11 +23,18 @@ const availableTemplates = ref([
 		isPro: true,
 	},
 	{
-		id: "minimal",
+		id: "minimalist",
 		name: "Pure Minimalist",
 		desc: "Tanpa gangguan, hanya karyamu yang berbicara.",
 		preview:
 			"https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=400&auto=format&fit=crop",
+		isPro: false,
+	},
+	{
+		id: "creative",
+		name: "Creative Vibe",
+		preview:
+			"https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800",
 		isPro: false,
 	},
 ]);
@@ -64,7 +71,7 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 </script>
 
 <template>
-	<div class="max-w-6xl mx-auto py-10 px-6">
+	<div class="w-full mx-auto py-10">
 		<div class="mb-10">
 			<h1 class="text-3xl font-black text-slate-900 tracking-tight">Pilih Template</h1>
 			<p class="text-slate-500 mt-1">Sesuaikan gaya portofoliomu dengan kepribadianmu.</p>
