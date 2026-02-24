@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
+
 definePageMeta({
 	middleware: ["auth"],
 });
@@ -14,14 +16,21 @@ const menus = ref([
 	{ label: "Settings", to: "/dashboard/settings" },
 ]);
 
+onMounted(() => {
+	portfolio.fetchUserPortfolio();
+});
+
 const copyProfileLink = () => {
-	const username = portfolio.profile.username.toLowerCase();
-	if (!username) return alert("Atur username kamu dulu di profil!");
+	const username = portfolio.profile.username?.toLowerCase();
+	if (!username) {
+		toast.warning("Atur username kamu dulu di profil!");
+		return;
+	}
 
 	const fullUrl = `${window.location.origin}/${username}`;
 
 	navigator.clipboard.writeText(fullUrl);
-	alert("Link portofolio berhasil disalin ke clipboard!");
+	toast.success("Link portofolio berhasil disalin ke clipboard!");
 };
 
 const handleLogout = async () => {
@@ -66,13 +75,15 @@ const handleLogout = async () => {
 			<div class="p-4 border-t border-slate-100">
 				<button
 					@click="handleLogout"
-					class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-500 hover:bg-red-50 transition-all"
+					class="w-full flex items-center justify-center sm:justify-start gap-3 px-4 py-3 rounded-xl font-bold text-red-500 hover:bg-red-50 transition-all"
 				>
-					<span>🚪</span> Keluar
+					<Icon name="ph:sign-out-bold" />
+					<span>Keluar</span>
 				</button>
 			</div>
 		</aside>
 
+		<!-- Mobile Sidebar Overlay -->
 		<div
 			v-if="isSidebarOpen"
 			@click="isSidebarOpen = false"
@@ -80,12 +91,14 @@ const handleLogout = async () => {
 			aria-hidden="true"
 		></div>
 
-		<main class="md:ml-64 p-8">
-			<header class="flex justify-between items-center mb-8">
+		<main class="md:ml-64 p-4 md:p-8">
+			<header
+				class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+			>
 				<div class="flex items-center gap-2">
 					<button
 						@click="isSidebarOpen = !isSidebarOpen"
-						class="md:hidden p-2 rounded-md text-slate-700 hover:bg-slate-100"
+						class="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -104,25 +117,28 @@ const handleLogout = async () => {
 						<span class="sr-only">Buka menu</span>
 					</button>
 					<div>
-						<h2 class="text-sm font-medium text-slate-400 uppercase tracking-widest">Dashboard</h2>
-						<p class="text-xl font-bold text-slate-900 italic">Selamat datang kembali!</p>
+						<h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest">Dashboard</h2>
+						<p class="text-xl font-bold text-slate-900">
+							Hai, {{ portfolio.profile.full_name?.split(" ")[0] || "Pengguna" }}!
+						</p>
 					</div>
 				</div>
 
-				<div class="flex items-center gap-4">
+				<div class="flex items-center gap-3 w-full sm:w-auto">
 					<button
 						@click="copyProfileLink"
-						class="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all"
+						class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-800 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
 					>
 						<Icon name="ph:share-network-bold" />
-						Share Portfolio
+						<span class="hidden sm:inline">Share Link</span>
 					</button>
 					<a
 						:href="`/${portfolio.profile.username.toLowerCase()}`"
 						target="_blank"
-						class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold shadow-sm hover:bg-slate-50"
+						class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-slate-900/10"
 					>
-						Lihat Portofolio ↗
+						<span>Lihat Profil</span>
+						<Icon name="ph:arrow-up-right-bold" class="hidden sm:inline" />
 					</a>
 				</div>
 			</header>
@@ -134,6 +150,6 @@ const handleLogout = async () => {
 
 <style scoped>
 .router-link-active {
-	@apply bg-emerald-50 text-emerald-600 border-emerald-100;
+	@apply bg-emerald-50 text-emerald-600;
 }
 </style>

@@ -64,14 +64,10 @@ function handleAvatarUpload(event: any) {
 
 	localPreview.value = URL.createObjectURL(file);
 }
-
-onMounted(() => {
-	portfolio.fetchUserPortfolio();
-});
 </script>
 
 <template>
-	<div class="max-w-4xl mx-auto py-10 px-6">
+	<div class="w-full py-10">
 		<div class="mb-10 flex justify-between items-end">
 			<div>
 				<h1 class="text-3xl font-black text-slate-900 tracking-tight">Pengaturan Profil</h1>
