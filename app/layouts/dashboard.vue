@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
 
-definePageMeta({
-	middleware: ["auth"],
-});
-
 const portfolio = usePortfolioStore();
 const supabase = useSupabaseClient();
 const isSidebarOpen = ref(false);
