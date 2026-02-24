@@ -11,7 +11,10 @@ const loginWithGoogle = async () => {
 	const { error } = await supabase.auth.signInWithOAuth({
 		provider: "google",
 		options: {
-			redirectTo: `${window.location.origin}/confirm`,
+			redirectTo:
+				process.env.NODE_ENV === "production"
+					? "https://portobit.vercel.app/confirm"
+					: "http://localhost:3000/confirm",
 			queryParams: {
 				access_type: "offline",
 				prompt: "select_account",
