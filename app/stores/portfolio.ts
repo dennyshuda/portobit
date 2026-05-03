@@ -197,78 +197,44 @@ export const usePortfolioStore = defineStore("portfolio", {
 			}
 
 			try {
-				for (const project of this.projects) {
-					if (project.pendingImageFile) {
-						const file = project.pendingImageFile;
-						const fileExt = file.name.split(".").pop();
-						const fileName = `projects/${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+				// 1. Handle image uploads in parallel for efficiency
+				const uploadPromises = this.projects.map(async (project) => {
+					if (!project.pendingImageFile) return;
 
-						const oldImageUrl = project.image_url;
+					const file = project.pendingImageFile;
+					const fileExt = file.name.split(".").pop();
+					const fileName = `projects/${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-						const { error: uploadError } = await supabase.storage
-							.from("portobit")
-							.upload(fileName, file);
+					const { error: uploadError } = await supabase.storage
+						.from("portobit")
+						.upload(fileName, file);
+					if (uploadError) throw uploadError;
 
-						if (uploadError) throw uploadError;
+					const { data } = supabase.storage.from("portobit").getPublicUrl(fileName);
+					project.image_url = data.publicUrl;
+					delete project.pendingImageFile;
+				});
 
-						const { data } = supabase.storage.from("portobit").getPublicUrl(fileName);
-						project.image_url = data.publicUrl;
+				await Promise.all(uploadPromises);
 
-						if (oldImageUrl && oldImageUrl.includes("portobit")) {
-							try {
-								// Ekstrak path setelah nama bucket
-								const pathAfterBucket = oldImageUrl.split("/storage/v1/object/public/portobit/")[1];
-								if (pathAfterBucket) {
-									const { data, error } = await supabase.storage
-										.from("portobit")
-										.remove([decodeURIComponent(pathAfterBucket)]);
-									console.log({ data, error });
-								}
-							} catch (err) {
-								console.error("Gagal menghapus gambar lama:", err);
-								// Tetap lanjut, jangan biarkan error hapus menghentikan proses save
-							}
-						}
+				// 2. Prepare data for upsert
+				const projectsToSave = this.projects.map((p) => {
+					const { is_new, ...rest } = p;
+					return {
+						...rest,
+						id: is_new ? undefined : p.id, // Let database generate ID for new ones
+						profile_id: userId,
+					};
+				});
 
-						delete project.pendingImageFile;
-					}
-				}
+				// 3. Single Upsert operation (Handle both insert and update)
+				const { error: upsertError } = await supabase
+					.from("projects")
+					.upsert(projectsToSave, { onConflict: "id" });
 
-				const newProjects = this.projects
-					.filter((p) => p.is_new)
-					.map(({ id, is_new, ...rest }) => ({ ...rest, profile_id: userId }));
+				if (upsertError) throw upsertError;
 
-				const existingProjects = this.projects.filter((p) => !p.is_new);
-
-				// A. Insert Project Baru
-				if (newProjects.length > 0) {
-					const { data: insertedData, error: insError } = await supabase
-						.from("projects")
-						.insert(newProjects)
-						.select();
-
-					if (insError) throw insError;
-					await this.fetchUserProjects();
-				}
-
-				// B. Update Project Lama
-				for (const project of existingProjects) {
-					if (!project.id) {
-						console.warn("Skip update: Project tidak memiliki ID", project);
-						continue;
-					}
-					const { error: updError } = await supabase
-						.from("projects")
-						.update({
-							title: project.title,
-							description: project.description,
-							link_url: project.link_url,
-							image_url: project.image_url,
-						})
-						.eq("id", project.id);
-
-					if (updError) throw updError;
-				}
+				await this.fetchUserPortfolio(); // Refresh the whole state
 
 				this.hasUnsavedChanges = false;
 				toast.success("Semua perubahan project berhasil disimpan!");
