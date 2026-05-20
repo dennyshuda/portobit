@@ -3,25 +3,16 @@ const templates = [
 	{
 		id: "modern",
 		name: "The Modernist",
-		category: "Minimalist",
+		category: "Free",
 		image:
-			"https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800",
+			"https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&q=80&w=800",
 		isPro: false,
 		tag: "Popular",
 	},
 	{
-		id: "terminal",
-		name: "Hacker Terminal",
-		category: "Developer",
-		image:
-			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
-		isPro: true,
-		tag: "Premium",
-	},
-	{
 		id: "minimalist",
 		name: "Pure Minimalist",
-		category: "Creative",
+		category: "Free",
 		image:
 			"https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&q=80&w=800",
 		isPro: false,
@@ -30,123 +21,113 @@ const templates = [
 	{
 		id: "creative",
 		name: "Creative Vibe",
-		category: "Artist",
+		category: "Free",
 		image:
 			"https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800",
+		isPro: false,
+		tag: "Bold",
+	},
+	{
+		id: "terminal",
+		name: "Hacker Terminal",
+		category: "Pro",
+		image:
+			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
 		isPro: true,
-		tag: "New",
+		tag: "Developer",
+	},
+	{
+		id: "executive",
+		name: "Executive Edge",
+		category: "Pro",
+		image:
+			"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=800",
+		isPro: true,
+		tag: "Premium",
 	},
 ];
 
 const selectedCategory = ref("All");
-const categories = ["All", "Minimalist", "Developer", "Creative", "Artist"];
+const categories = ["All", "Free", "Pro"];
 
 const filteredTemplates = computed(() => {
 	if (selectedCategory.value === "All") return templates;
-	return templates.filter((t) => t.category === selectedCategory.value);
+	return templates.filter((template) => template.category === selectedCategory.value);
 });
 </script>
 
 <template>
 	<div class="min-h-screen bg-white pt-32 pb-20">
-		<div class="max-w-7xl mx-auto px-6">
-			<div class="text-center mb-16">
-				<h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6">
-					Pilih desain <span class="text-emerald-500">karaktermu.</span>
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<div class="mb-14 max-w-3xl">
+				<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Templates</p>
+				<h1 class="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
+					3 tema free, 2 tema pro.
 				</h1>
-				<p class="text-slate-500 max-w-2xl mx-auto text-lg">
-					Mulai dengan template yang dirancang profesional. Sesuaikan warna, font, dan konten hanya
-					dengan beberapa klik.
+				<p class="mt-5 text-lg leading-8 text-slate-600">
+					Pilih gaya portofolio yang paling cocok untuk personal brand kamu.
 				</p>
 			</div>
 
-			<div class="flex flex-wrap justify-center gap-3 mb-12">
+			<div class="mb-10 flex flex-wrap gap-3">
 				<button
-					v-for="cat in categories"
-					:key="cat"
-					@click="selectedCategory = cat"
+					v-for="category in categories"
+					:key="category"
+					@click="selectedCategory = category"
 					:class="[
-						'px-6 py-2.5 rounded-full text-sm font-bold transition-all border-2',
-						selectedCategory === cat
-							? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-200'
-							: 'bg-white border-slate-100 text-slate-400 hover:border-slate-200',
+						'rounded-lg border px-4 py-2.5 text-sm font-bold transition-colors',
+						selectedCategory === category
+							? 'border-slate-950 bg-slate-950 text-white'
+							: 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50',
 					]"
 				>
-					{{ cat }}
+					{{ category }}
 				</button>
 			</div>
 
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-				<div v-for="temp in filteredTemplates" :key="temp.id" class="group cursor-pointer">
-					<div
-						class="relative aspect-[4/3] mb-6 overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 shadow-sm transition-all group-hover:shadow-2xl group-hover:shadow-emerald-100 group-hover:-translate-y-2"
-					>
+			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+				<article v-for="template in filteredTemplates" :key="template.id" class="group">
+					<div class="relative mb-5 aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">
 						<img
-							:src="temp.image"
-							class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+							:src="template.image"
+							class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
 							alt="Template Preview"
 						/>
 
-						<div class="absolute top-6 left-6 flex gap-2">
-							<span
-								class="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm"
-							>
-								{{ temp.tag }}
+						<div class="absolute left-4 top-4 flex gap-2">
+							<span class="rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-900 shadow-sm backdrop-blur">
+								{{ template.tag }}
 							</span>
 							<span
-								v-if="temp.isPro"
-								class="px-4 py-1.5 bg-emerald-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-200"
+								v-if="template.isPro"
+								class="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-amber-300 shadow-sm"
 							>
 								PRO
 							</span>
 						</div>
 
-						<div
-							class="absolute inset-0 bg-emerald-600/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-						>
+						<div class="absolute inset-0 flex items-center justify-center bg-slate-950/20 opacity-0 transition-opacity group-hover:opacity-100">
 							<NuxtLink
-								:to="`/template/${temp.id}`"
-								class="bg-white text-slate-900 px-8 py-3 rounded-2xl font-black shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+								:to="`/template/${template.id}`"
+								class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-black text-slate-950 shadow-xl transition-transform group-hover:scale-100"
 							>
 								Live Preview
+								<Icon name="ph:arrow-up-right-bold" />
 							</NuxtLink>
 						</div>
 					</div>
 
-					<div class="px-2">
-						<div class="flex items-center justify-between mb-1">
-							<h3 class="text-xl font-black text-slate-900">{{ temp.name }}</h3>
-							<Icon
-								name="ph:arrow-up-right-bold"
-								class="text-slate-300 group-hover:text-emerald-500 transition-colors"
-							/>
+					<div class="flex items-start justify-between gap-4">
+						<div>
+							<h3 class="text-xl font-black text-slate-950">{{ template.name }}</h3>
+							<p class="mt-1 text-sm font-bold uppercase tracking-wide text-slate-400">
+								{{ template.category }}
+							</p>
 						</div>
-						<p class="text-sm font-bold text-slate-400 uppercase tracking-wider">
-							{{ temp.category }}
-						</p>
+						<Icon name="ph:arrow-up-right-bold" class="mt-1 text-slate-300 group-hover:text-emerald-500" />
 					</div>
-				</div>
-			</div>
-
-			<div class="mt-24 bg-slate-900 rounded-[3rem] p-12 text-center text-white">
-				<h2 class="text-3xl md:text-4xl font-black mb-6">Punya konsep template sendiri?</h2>
-				<p class="text-slate-400 mb-8 max-w-xl mx-auto">
-					Kami terus menambahkan template baru setiap minggu. Hubungi kami jika ingin request desain
-					tertentu.
-				</p>
-				<NuxtLink
-					to="/register"
-					class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-4 rounded-2xl font-black transition-all transform hover:scale-105"
-				>
-					Mulai Buat Portofolio
-				</NuxtLink>
+				</article>
 			</div>
 		</div>
 	</div>
 </template>
-
-<style scoped>
-.group:hover img {
-	filter: grayscale(0);
-}
-</style>

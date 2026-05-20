@@ -40,6 +40,14 @@ const availableTemplates = [
 			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
 		isPro: true,
 	},
+	{
+		id: "executive",
+		name: "Executive Edge",
+		desc: "Tampilan premium untuk founder, konsultan, dan profesional senior.",
+		preview:
+			"https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=800&auto=format&fit=crop",
+		isPro: true,
+	},
 ];
 
 const activeTemplateName = computed(() => portfolio.profile.template_name || "modern");
@@ -105,7 +113,7 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 			</NuxtLink>
 		</section>
 
-		<section class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+		<section class="grid gap-5 md:grid-cols-2 xl:grid-cols-5">
 			<article
 				v-for="template in availableTemplates"
 				:key="template.id"

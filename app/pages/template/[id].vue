@@ -68,6 +68,12 @@ const dummyData = {
 				:profile="dummyData.profile"
 				:projects="dummyData.projects"
 			/>
+
+			<TemplatesExecutive
+				v-if="templateId === 'executive'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
 		</div>
 	</div>
 </template>

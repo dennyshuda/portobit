@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Creative from "~/components/templates/creative.vue";
+import Executive from "~/components/templates/executive.vue";
 import Minimalist from "~/components/templates/minimalist.vue";
 import Modern from "~/components/templates/modern.vue";
 import Terminal from "~/components/templates/terminal.vue";
@@ -18,6 +19,7 @@ const notFound = ref(false);
 
 const templateComponents: Record<string, any> = {
 	creative: Creative,
+	executive: Executive,
 	minimalist: Minimalist,
 	modern: Modern,
 	terminal: Terminal,
