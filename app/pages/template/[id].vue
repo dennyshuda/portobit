@@ -69,8 +69,26 @@ const dummyData = {
 				:projects="dummyData.projects"
 			/>
 
+			<TemplatesStudio
+				v-if="templateId === 'studio'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
+
+			<TemplatesSnapshot
+				v-if="templateId === 'snapshot'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
+
 			<TemplatesExecutive
 				v-if="templateId === 'executive'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
+
+			<TemplatesMonochrome
+				v-if="templateId === 'monochrome'"
 				:profile="dummyData.profile"
 				:projects="dummyData.projects"
 			/>

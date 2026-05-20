@@ -33,6 +33,22 @@ const availableTemplates = [
 		isPro: false,
 	},
 	{
+		id: "studio",
+		name: "Studio Folio",
+		desc: "Grid visual yang cocok untuk creative studio dan karya berbasis gambar.",
+		preview:
+			"https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=800&auto=format&fit=crop",
+		isPro: false,
+	},
+	{
+		id: "snapshot",
+		name: "Snapshot",
+		desc: "Layout compact untuk profil yang ingin cepat dipindai recruiter atau klien.",
+		preview:
+			"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop",
+		isPro: false,
+	},
+	{
 		id: "terminal",
 		name: "Hacker Terminal",
 		desc: "Gaya terminal untuk developer yang ingin tampil teknikal.",
@@ -46,6 +62,14 @@ const availableTemplates = [
 		desc: "Tampilan premium untuk founder, konsultan, dan profesional senior.",
 		preview:
 			"https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=800&auto=format&fit=crop",
+		isPro: true,
+	},
+	{
+		id: "monochrome",
+		name: "Monochrome Pro",
+		desc: "Tema premium hitam-putih dengan kontras kuat dan presentasi editorial.",
+		preview:
+			"https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop",
 		isPro: true,
 	},
 ];
@@ -113,7 +137,7 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 			</NuxtLink>
 		</section>
 
-		<section class="grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+		<section class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
 			<article
 				v-for="template in availableTemplates"
 				:key="template.id"

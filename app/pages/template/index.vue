@@ -28,6 +28,24 @@ const templates = [
 		tag: "Bold",
 	},
 	{
+		id: "studio",
+		name: "Studio Folio",
+		category: "Free",
+		image:
+			"https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=800",
+		isPro: false,
+		tag: "Visual",
+	},
+	{
+		id: "snapshot",
+		name: "Snapshot",
+		category: "Free",
+		image:
+			"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+		isPro: false,
+		tag: "Compact",
+	},
+	{
 		id: "terminal",
 		name: "Hacker Terminal",
 		category: "Pro",
@@ -44,6 +62,15 @@ const templates = [
 			"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=800",
 		isPro: true,
 		tag: "Premium",
+	},
+	{
+		id: "monochrome",
+		name: "Monochrome Pro",
+		category: "Pro",
+		image:
+			"https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800",
+		isPro: true,
+		tag: "Editorial",
 	},
 ];
 
@@ -62,7 +89,7 @@ const filteredTemplates = computed(() => {
 			<div class="mb-14 max-w-3xl">
 				<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Templates</p>
 				<h1 class="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
-					3 tema free, 2 tema pro.
+					5 tema free, 3 tema pro.
 				</h1>
 				<p class="mt-5 text-lg leading-8 text-slate-600">
 					Pilih gaya portofolio yang paling cocok untuk personal brand kamu.

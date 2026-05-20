@@ -2,7 +2,10 @@
 import Creative from "~/components/templates/creative.vue";
 import Executive from "~/components/templates/executive.vue";
 import Minimalist from "~/components/templates/minimalist.vue";
+import Monochrome from "~/components/templates/monochrome.vue";
 import Modern from "~/components/templates/modern.vue";
+import Snapshot from "~/components/templates/snapshot.vue";
+import Studio from "~/components/templates/studio.vue";
 import Terminal from "~/components/templates/terminal.vue";
 
 definePageMeta({
@@ -21,7 +24,10 @@ const templateComponents: Record<string, any> = {
 	creative: Creative,
 	executive: Executive,
 	minimalist: Minimalist,
+	monochrome: Monochrome,
 	modern: Modern,
+	snapshot: Snapshot,
+	studio: Studio,
 	terminal: Terminal,
 };
 
