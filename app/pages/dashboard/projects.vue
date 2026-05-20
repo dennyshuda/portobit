@@ -2,6 +2,7 @@
 definePageMeta({ layout: "dashboard" });
 
 const portfolio = usePortfolioStore();
+const projectPendingDelete = ref<{ index: number; title: string; imageUrl: string | null } | null>(null);
 
 function handleProjectImageUpload(event: Event, index: number) {
 	const input = event.target as HTMLInputElement;
@@ -13,6 +14,25 @@ function handleProjectImageUpload(event: Event, index: number) {
 	project.pendingImageFile = file;
 	project.image_url = URL.createObjectURL(file);
 	portfolio.hasUnsavedChanges = true;
+}
+
+function requestDeleteProject(index: number) {
+	const project = portfolio.projects[index];
+	if (!project) return;
+
+	projectPendingDelete.value = {
+		index,
+		title: project.title || "Untitled project",
+		imageUrl: project.image_url,
+	};
+}
+
+async function confirmDeleteProject() {
+	if (!projectPendingDelete.value) return;
+
+	const { index, imageUrl } = projectPendingDelete.value;
+	await portfolio.deleteProject(index, imageUrl);
+	projectPendingDelete.value = null;
 }
 </script>
 
@@ -79,7 +99,7 @@ function handleProjectImageUpload(event: Event, index: number) {
 										@input="portfolio.hasUnsavedChanges = true"
 									/>
 									<button
-										@click="portfolio.deleteProject(index, project.image_url)"
+										@click="requestDeleteProject(index)"
 										class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
 										title="Hapus project"
 									>
@@ -178,6 +198,52 @@ function handleProjectImageUpload(event: Event, index: number) {
 				</div>
 			</div>
 		</Transition>
+
+		<Transition name="fade">
+			<div
+				v-if="projectPendingDelete"
+				class="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+				role="dialog"
+				aria-modal="true"
+			>
+				<div class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-2xl">
+					<div class="flex items-start gap-4">
+						<div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
+							<Icon name="ph:trash-bold" size="23" />
+						</div>
+						<div>
+							<h2 class="text-lg font-black text-slate-950">Hapus project?</h2>
+							<p class="mt-2 text-sm leading-6 text-slate-600">
+								Project <span class="font-bold text-slate-900">{{ projectPendingDelete.title }}</span>
+								akan dihapus dari dashboard dan halaman publik.
+							</p>
+						</div>
+					</div>
+
+					<div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+						<button
+							@click="projectPendingDelete = null"
+							:disabled="Boolean(portfolio.deletingProjectId)"
+							class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+						>
+							Batal
+						</button>
+						<button
+							@click="confirmDeleteProject"
+							:disabled="Boolean(portfolio.deletingProjectId)"
+							class="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-300"
+						>
+							<Icon
+								v-if="portfolio.deletingProjectId"
+								name="ph:circle-notch-bold"
+								class="animate-spin"
+							/>
+							<span>{{ portfolio.deletingProjectId ? "Menghapus..." : "Hapus Project" }}</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</Transition>
 	</div>
 </template>
 
@@ -190,5 +256,14 @@ function handleProjectImageUpload(event: Event, index: number) {
 .slide-up-leave-to {
 	opacity: 0;
 	transform: translateY(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
 }
 </style>
