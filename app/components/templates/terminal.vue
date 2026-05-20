@@ -75,7 +75,8 @@ const today = new Date().toLocaleDateString("en-US", {
 						</p>
 
 						<a
-							:href="project.link"
+							v-if="project.link_url"
+							:href="project.link_url"
 							target="_blank"
 							class="inline-flex items-center gap-2 text-xs font-bold hover:text-white transition-colors"
 						>

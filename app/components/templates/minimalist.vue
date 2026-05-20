@@ -52,7 +52,8 @@ defineProps<{
 								</div>
 
 								<a
-									:href="project.link"
+									v-if="project.link_url"
+									:href="project.link_url"
 									target="_blank"
 									class="group/link inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] font-black"
 								>

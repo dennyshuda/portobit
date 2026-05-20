@@ -39,7 +39,8 @@ const props = defineProps<{
 							class="aspect-square bg-white border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-2 transition-all duration-300 overflow-hidden"
 						>
 							<img
-								:src="project.image"
+								v-if="project.image_url"
+								:src="project.image_url"
 								class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500"
 								alt=""
 							/>
