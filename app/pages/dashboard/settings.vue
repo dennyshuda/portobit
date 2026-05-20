@@ -9,13 +9,22 @@ const portfolio = usePortfolioStore();
 const isUsernameTaken = ref(false);
 const checkingUsername = ref(false);
 const localPreview = ref<string | null>(null);
-const errors = ref<Record<string, string>>({});
+const errors = ref<Record<string, string[]>>({});
+
+const hasErrors = computed(() => Object.keys(errors.value).length > 0);
+const avatarSrc = computed(() => {
+	return (
+		localPreview.value ||
+		portfolio.profile.avatar_url ||
+		`https://ui-avatars.com/api/?name=${encodeURIComponent(portfolio.profile.full_name || "Portobit")}`
+	);
+});
 
 const validate = () => {
 	const result = profileSchema.safeParse(portfolio.profile);
 
 	if (!result.success) {
-		errors.value = result.error.flatten().fieldErrors as any;
+		errors.value = result.error.flatten().fieldErrors as Record<string, string[]>;
 		return false;
 	}
 
@@ -25,22 +34,24 @@ const validate = () => {
 
 watch(
 	() => portfolio.profile,
-	() => {
-		validate();
-	},
+	() => validate(),
 	{ deep: true },
 );
 
 const handleSave = async () => {
 	if (!validate() || isUsernameTaken.value) {
-		toast.error("Periksa kembali inputan kamu");
+		toast.error("Periksa kembali inputan kamu.");
 		return;
 	}
+
 	await portfolio.saveChanges();
 };
 
 const checkUsername = async (username: string) => {
-	if (username.length < 3) return;
+	if (username.length < 3) {
+		isUsernameTaken.value = false;
+		return;
+	}
 
 	checkingUsername.value = true;
 	const supabase = useSupabaseClient();
@@ -55,134 +66,114 @@ const checkUsername = async (username: string) => {
 	checkingUsername.value = false;
 };
 
-function handleAvatarUpload(event: any) {
-	const file = event.target.files[0];
+function handleAvatarUpload(event: Event) {
+	const input = event.target as HTMLInputElement;
+	const file = input.files?.[0];
 	if (!file) return;
 
 	portfolio.pendingAvatarFile = file;
 	portfolio.hasUnsavedChanges = true;
-
 	localPreview.value = URL.createObjectURL(file);
 }
 </script>
 
 <template>
-	<div class="w-full py-10">
-		<div class="mb-10 flex justify-between items-end">
+	<div class="space-y-6">
+		<section class="flex flex-col justify-between gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center">
 			<div>
-				<h1 class="text-3xl font-black text-slate-900 tracking-tight">Pengaturan Profil</h1>
-				<p class="text-slate-500 mt-1">Kelola bagaimana dunia melihat dirimu di Portobit.</p>
+				<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Settings</p>
+				<h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950">Pengaturan Profil</h1>
+				<p class="mt-1 text-sm text-slate-600">Kelola identitas yang tampil di halaman Portobit kamu.</p>
 			</div>
 
 			<button
 				@click="handleSave"
-				:disabled="Object.keys(errors).length > 0 || portfolio.isLoading"
-				class="hidden md:flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold shadow-lg shadow-slate-200 hover:bg-emerald-600 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all duration-300"
+				:disabled="hasErrors || isUsernameTaken || portfolio.isLoading"
+				class="hidden items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600 disabled:bg-slate-200 disabled:text-slate-400 md:inline-flex"
 			>
 				<Icon v-if="portfolio.isLoading" name="ph:circle-notch-bold" class="animate-spin" />
 				<Icon v-else name="ph:floppy-disk-back-bold" />
-				Simpan Perubahan
+				{{ portfolio.isLoading ? "Menyimpan..." : "Simpan Perubahan" }}
 			</button>
-		</div>
+		</section>
 
-		<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-			<div class="lg:col-span-4">
-				<div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 text-center shadow-sm">
-					<div class="relative group mx-auto w-32 h-32 mb-4">
-						<img
-							:src="
-								localPreview ||
-								portfolio.profile.avatar_url ||
-								'https://ui-avatars.com/api/?name=' + portfolio.profile.full_name
-							"
-							class="w-32 h-32 rounded-[2.5rem] object-cover border-4 border-white shadow-xl ring-1 ring-slate-100"
-						/>
-						<label
-							class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/60 rounded-[2.5rem] opacity-0 group-hover:opacity-100 cursor-pointer transition-all duration-300 backdrop-blur-sm"
-						>
-							<Icon name="ph:camera-bold" class="text-white mb-1" size="24" />
-							<span class="text-white text-[10px] font-black tracking-widest">UBAH FOTO</span>
-							<input type="file" class="hidden" accept="image/*" @change="handleAvatarUpload" />
-						</label>
-					</div>
-					<h3 class="font-bold text-slate-800 line-clamp-1">
-						{{ portfolio.profile.full_name || "Your Name" }}
-					</h3>
-					<p class="text-xs text-slate-400 font-medium font-mono">
-						@{{ portfolio.profile.username || "username" }}
-					</p>
+		<div class="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+			<aside class="rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm">
+				<div class="group relative mx-auto mb-4 h-28 w-28">
+					<img
+						:src="avatarSrc"
+						class="h-28 w-28 rounded-lg border border-slate-200 object-cover shadow-sm"
+						alt="Avatar preview"
+					/>
+					<label class="absolute inset-0 flex cursor-pointer flex-col items-center justify-center rounded-lg bg-slate-950/65 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+						<Icon name="ph:camera-bold" class="mb-1 text-white" size="24" />
+						<span class="text-[10px] font-black uppercase tracking-widest text-white">Ubah Foto</span>
+						<input type="file" class="hidden" accept="image/*" @change="handleAvatarUpload" />
+					</label>
 				</div>
-			</div>
+				<h3 class="truncate font-black text-slate-950">
+					{{ portfolio.profile.full_name || "Your Name" }}
+				</h3>
+				<p class="mt-1 truncate font-mono text-xs text-slate-500">@{{ portfolio.profile.username || "username" }}</p>
+			</aside>
 
-			<div class="lg:col-span-8 space-y-6">
-				<div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm space-y-6">
+			<section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+				<div class="grid gap-6">
 					<div class="space-y-2">
-						<label class="text-sm font-black text-slate-700 ml-1">Nama Lengkap</label>
-						<div class="relative">
-							<input
-								v-model="portfolio.profile.full_name"
-								type="text"
-								class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"
-								:class="{ 'border-red-500 bg-red-50': errors.full_name }"
-								placeholder="Misal: Daffa Raihan"
-							/>
-							<p
-								v-if="errors.full_name"
-								class="text-red-500 text-xs mt-1.5 ml-1 flex items-center gap-1"
-							>
-								<Icon name="ph:warning-circle-fill" /> {{ errors.full_name[0] }}
-							</p>
-						</div>
+						<label class="text-sm font-black text-slate-800">Nama Lengkap</label>
+						<input
+							v-model="portfolio.profile.full_name"
+							type="text"
+							class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-colors focus:border-emerald-400 focus:bg-white"
+							:class="{ 'border-red-400 bg-red-50': errors.full_name }"
+							placeholder="Misal: Daffa Raihan"
+						/>
+						<p v-if="errors.full_name" class="flex items-center gap-1 text-xs text-red-600">
+							<Icon name="ph:warning-circle-fill" /> {{ errors.full_name[0] }}
+						</p>
 					</div>
 
 					<div class="space-y-2">
-						<label class="text-sm font-black text-slate-700 ml-1">Username</label>
+						<label class="text-sm font-black text-slate-800">Username</label>
 						<div class="relative">
-							<span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold"
-								>@</span
-							>
+							<span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">@</span>
 							<input
 								v-model="portfolio.profile.username"
 								@input="checkUsername(($event.target as HTMLInputElement).value)"
 								type="text"
-								class="w-full pl-10 pr-12 py-3 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all font-medium"
+								class="w-full rounded-lg border border-slate-200 bg-slate-50 py-3 pl-9 pr-12 text-sm font-semibold outline-none transition-colors focus:border-emerald-400 focus:bg-white"
 								placeholder="username"
 							/>
+							<Icon v-if="checkingUsername" name="ph:circle-notch-bold" class="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-slate-400" />
 						</div>
-						<p v-if="errors.username" class="text-red-500 text-xs mt-1.5 ml-1">
-							{{ errors.username[0] }}
-						</p>
-						<p v-if="isUsernameTaken" class="text-red-500 text-xs mt-1.5 ml-1">
-							Username ini sudah tidak tersedia.
-						</p>
+						<p v-if="errors.username" class="text-xs text-red-600">{{ errors.username[0] }}</p>
+						<p v-if="isUsernameTaken" class="text-xs text-red-600">Username ini sudah tidak tersedia.</p>
 					</div>
 
 					<div class="space-y-2">
-						<label class="text-sm font-black text-slate-700 ml-1 text-flex justify-between">
-							Bio Singkat
-							<span class="text-[10px] text-slate-400 font-normal italic"
-								>{{ portfolio.profile.bio?.length || 0 }}/160</span
-							>
+						<label class="flex justify-between text-sm font-black text-slate-800">
+							<span>Bio Singkat</span>
+							<span class="text-xs font-semibold text-slate-400">{{ portfolio.profile.bio?.length || 0 }}/160</span>
 						</label>
 						<textarea
 							v-model="portfolio.profile.bio"
-							rows="3"
-							class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all resize-none"
-							:class="{ 'border-red-500 bg-red-50': errors.bio }"
+							rows="4"
+							class="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 outline-none transition-colors focus:border-emerald-400 focus:bg-white"
+							:class="{ 'border-red-400 bg-red-50': errors.bio }"
 							placeholder="Ceritakan sedikit tentang dirimu..."
 						></textarea>
-						<p v-if="errors.bio" class="text-red-500 text-xs mt-1">{{ errors.bio[0] }}</p>
+						<p v-if="errors.bio" class="text-xs text-red-600">{{ errors.bio[0] }}</p>
 					</div>
 				</div>
-
-				<button
-					@click="handleSave"
-					:disabled="Object.keys(errors).length > 0 || isUsernameTaken || portfolio.isLoading"
-					class="md:hidden w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl disabled:bg-slate-200 transition-all"
-				>
-					{{ portfolio.isLoading ? "Menyimpan..." : "Simpan Perubahan" }}
-				</button>
-			</div>
+			</section>
 		</div>
+
+		<button
+			@click="handleSave"
+			:disabled="hasErrors || isUsernameTaken || portfolio.isLoading"
+			class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600 disabled:bg-slate-200 md:hidden"
+		>
+			{{ portfolio.isLoading ? "Menyimpan..." : "Simpan Perubahan" }}
+		</button>
 	</div>
 </template>
