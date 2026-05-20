@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import Creative from "~/components/templates/creative.vue";
 import Minimalist from "~/components/templates/minimalist.vue";
 import Modern from "~/components/templates/modern.vue";
 import Terminal from "~/components/templates/terminal.vue";
-import Creative from "~/components/templates/creative.vue";
 
 definePageMeta({
 	layout: false,
@@ -14,39 +14,53 @@ const supabase = useSupabaseClient();
 const profile = ref<any>(null);
 const projects = ref<any[]>([]);
 const loading = ref(true);
+const notFound = ref(false);
+
+const templateComponents: Record<string, any> = {
+	creative: Creative,
+	minimalist: Minimalist,
+	modern: Modern,
+	terminal: Terminal,
+};
+
+const activeTemplate = computed(() => {
+	const templateName = profile.value?.template_name || "modern";
+	return templateComponents[templateName] || Modern;
+});
 
 const updateSeo = (data: any) => {
 	useSeoMeta({
-		title: `${data.full_name} | Portobit`,
-		ogTitle: `${data.full_name} - Portfolio`,
-		description: `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
-		ogDescription: `Lihat portofolio profesional dari ${data.full_name} di Portobit.`,
+		title: `${data.full_name || data.username} | Portobit`,
+		ogTitle: `${data.full_name || data.username} - Portfolio`,
+		description: `Lihat portofolio profesional dari ${data.full_name || data.username} di Portobit.`,
+		ogDescription: `Lihat portofolio profesional dari ${data.full_name || data.username} di Portobit.`,
 		ogImage: data.avatar_url,
 		twitterCard: "summary_large_image",
-		twitterTitle: `${data.full_name} | Portobit`,
+		twitterTitle: `${data.full_name || data.username} | Portobit`,
 		twitterDescription: data.bio,
 		twitterImage: data.avatar_url,
-		keywords: `${data.full_name}, portofolio ${data.full_name}, portobit, ${data.username}`,
+		keywords: `${data.full_name || ""}, portofolio ${data.full_name || ""}, portobit, ${data.username}`,
 	});
 };
 
 const updateViews = async (profileId: string) => {
+	if (!import.meta.client) return;
+
 	const storageKey = `viewed_${profileId}`;
 	const isViewed = localStorage.getItem(storageKey);
 
-	if (!isViewed) {
-		const { error } = await supabase.rpc("increment_views", { row_id: profileId });
+	if (isViewed) return;
 
-		if (!error) {
-			localStorage.setItem(storageKey, "true");
-		}
+	const { error } = await supabase.rpc("increment_views", { row_id: profileId });
+	if (!error) {
+		localStorage.setItem(storageKey, "true");
 	}
 };
 
-// Ambil data berdasarkan username dari URL
 const fetchData = async () => {
-	if (!route.params.username) {
-		console.error("Username tidak ditemukan di URL");
+	const username = route.params.username;
+	if (!username || Array.isArray(username)) {
+		notFound.value = true;
 		loading.value = false;
 		return;
 	}
@@ -55,45 +69,35 @@ const fetchData = async () => {
 		const { data: profileData, error: profileError } = await supabase
 			.from("profiles")
 			.select("*")
-			.eq("username", route.params.username as string)
-			.single();
-
-		if (profileData) {
-			profile.value = profileData;
-			updateSeo(profileData);
-			updateViews(profileData.id);
-		}
+			.eq("username", username.toLowerCase())
+			.maybeSingle();
 
 		if (profileError) throw profileError;
-		profile.value = profileData;
 
-		// 2. Cari Projects berdasarkan profile_id
+		if (!profileData) {
+			notFound.value = true;
+			return;
+		}
+
+		profile.value = profileData;
+		updateSeo(profileData);
+		await updateViews(profileData.id);
+
 		const { data: projectData, error: projectError } = await supabase
 			.from("projects")
 			.select("*")
-			.eq("profile_id", profileData.id) // Pastikan kolom FK kamu benar (profile_id atau user_id)
+			.eq("profile_id", profileData.id)
 			.order("created_at", { ascending: false });
 
 		if (projectError) throw projectError;
-		projects.value = projectData;
+		projects.value = projectData || [];
 	} catch (error) {
 		console.error("Fetch error:", error);
+		notFound.value = true;
 	} finally {
 		loading.value = false;
 	}
 };
-
-const templateComponents: Record<string, any> = {
-	modern: Modern,
-	terminal: Terminal,
-	minimalist: Minimalist,
-	creative: Creative,
-};
-
-const activeTemplate = computed(() => {
-	const name = profile.value.template_name || "terminal";
-	return templateComponents[name];
-});
 
 onMounted(() => {
 	fetchData();
@@ -102,21 +106,21 @@ onMounted(() => {
 
 <template>
 	<div>
-		<div v-if="!profile" class="h-screen flex items-center justify-center bg-white">
-			<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-emerald-500"></div>
+		<div v-if="loading" class="flex h-screen items-center justify-center bg-white">
+			<div class="h-12 w-12 animate-spin rounded-full border-2 border-slate-200 border-t-emerald-500"></div>
 		</div>
 
 		<div
-			v-else-if="!profile"
-			class="h-screen flex flex-col items-center justify-center text-center p-6"
+			v-else-if="notFound"
+			class="flex h-screen flex-col items-center justify-center p-6 text-center"
 		>
-			<h1 class="text-6xl font-black text-slate-200 mb-4">404</h1>
-			<p class="text-xl font-bold text-slate-900 mb-2">Waduh, usernamenya nggak ada!</p>
-			<p class="text-slate-500 mb-8">
-				Mau klaim username <b>{{ $route.params.username }}</b> buat jadi milikmu?
+			<h1 class="mb-4 text-6xl font-black text-slate-200">404</h1>
+			<p class="mb-2 text-xl font-bold text-slate-900">Username ini belum tersedia.</p>
+			<p class="mb-8 text-slate-500">
+				Kamu bisa klaim <b>{{ route.params.username }}</b> sebagai link portofoliomu.
 			</p>
-			<NuxtLink to="/" class="bg-emerald-500 text-white px-8 py-3 rounded-2xl font-black">
-				Buat Portofolio Sekarang
+			<NuxtLink to="/" class="rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-white">
+				Buat Portofolio
 			</NuxtLink>
 		</div>
 
@@ -126,7 +130,7 @@ onMounted(() => {
 			<a
 				href="https://portobit.id"
 				target="_blank"
-				class="fixed bottom-6 right-6 bg-white/80 backdrop-blur shadow-lg border border-slate-200 px-4 py-2 rounded-full text-[10px] font-black tracking-widest flex items-center gap-2 hover:scale-105 transition-all z-[9999]"
+				class="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full border border-slate-200 bg-white/85 px-4 py-2 text-[10px] font-black tracking-widest shadow-lg backdrop-blur transition-transform hover:scale-105"
 			>
 				MADE WITH <span class="text-emerald-500">PORTOBIT</span>
 			</a>

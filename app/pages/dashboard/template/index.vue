@@ -4,54 +4,65 @@ import { toast } from "vue-sonner";
 definePageMeta({ layout: "dashboard" });
 
 const portfolio = usePortfolioStore();
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 
-const availableTemplates = ref([
+const availableTemplates = [
 	{
 		id: "modern",
 		name: "The Modernist",
 		desc: "Bersih, profesional, dan fokus pada konten.",
 		preview:
-			"https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?q=80&w=400&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?q=80&w=800&auto=format&fit=crop",
 		isPro: false,
-	},
-	{
-		id: "terminal",
-		name: "Hacker Terminal",
-		desc: "Gaya konsol Linux untuk para backend dev.",
-		preview:
-			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&auto=format&fit=crop",
-		isPro: true,
 	},
 	{
 		id: "minimalist",
 		name: "Pure Minimalist",
-		desc: "Tanpa gangguan, hanya karyamu yang berbicara.",
+		desc: "Tipografi editorial yang tenang untuk karya pilihan.",
 		preview:
-			"https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=400&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=800&auto=format&fit=crop",
 		isPro: false,
 	},
 	{
 		id: "creative",
 		name: "Creative Vibe",
+		desc: "Visual berani untuk desainer, ilustrator, dan kreator.",
 		preview:
 			"https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800",
 		isPro: false,
 	},
-]);
+	{
+		id: "terminal",
+		name: "Hacker Terminal",
+		desc: "Gaya terminal untuk developer yang ingin tampil teknikal.",
+		preview:
+			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
+		isPro: true,
+	},
+];
+
+const activeTemplateName = computed(() => portfolio.profile.template_name || "modern");
+const publicProfilePath = computed(() => {
+	const username = portfolio.profile.username?.toLowerCase();
+	return username ? `/${username}` : "/dashboard/settings";
+});
 
 const selectTemplate = async (templateId: string, isPro: boolean) => {
-	const supabase = useSupabaseClient();
-	const user = useSupabaseUser();
-	const userId = user.value?.sub;
-
-	if (!userId) {
-		throw new Error("User not found");
-	}
+	if (portfolio.isLoading || activeTemplateName.value === templateId) return;
 
 	if (isPro) {
-		toast.info("Fitur Pro", { description: "Template ini hanya untuk member Pro!" });
+		toast.info("Template Pro", { description: "Template ini akan tersedia untuk member Pro." });
 		return;
 	}
+
+	const userId = user.value?.sub;
+	if (!userId) {
+		toast.error("User tidak ditemukan. Silakan login ulang.");
+		return;
+	}
+
+	portfolio.isLoading = true;
 
 	try {
 		const { error } = await supabase
@@ -59,11 +70,14 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 			.update({ template_name: templateId })
 			.eq("id", userId);
 
-		portfolio.fetchUserPortfolio();
+		if (error) throw error;
 
-		toast.success("Template berhasil diganti!");
-	} catch (error) {
-		toast.error("Gagal mengganti template");
+		portfolio.profile.template_name = templateId;
+		toast.success("Template berhasil diganti.");
+	} catch (error: any) {
+		toast.error("Gagal mengganti template", {
+			description: error?.message || "Coba beberapa saat lagi.",
+		});
 	} finally {
 		portfolio.isLoading = false;
 	}
@@ -71,85 +85,83 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 </script>
 
 <template>
-	<div class="w-full mx-auto py-10">
-		<div class="mb-10">
-			<h1 class="text-3xl font-black text-slate-900 tracking-tight">Pilih Template</h1>
-			<p class="text-slate-500 mt-1">Sesuaikan gaya portofoliomu dengan kepribadianmu.</p>
-		</div>
+	<div class="space-y-6">
+		<section class="flex flex-col justify-between gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center">
+			<div>
+				<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Template</p>
+				<h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950">Pilih tampilan portofolio</h1>
+				<p class="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
+					Template yang dipilih akan langsung dipakai di halaman publik kamu.
+				</p>
+			</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-			<div
-				v-for="temp in availableTemplates"
-				:key="temp.id"
-				class="group relative bg-white border-2 rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2"
-				:class="
-					portfolio.profile.template_name === temp.id
-						? 'border-emerald-500 shadow-xl shadow-emerald-50/50'
-						: 'border-slate-100'
-				"
+			<NuxtLink
+				:to="publicProfilePath"
+				target="_blank"
+				class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 transition-colors hover:bg-slate-50"
 			>
-				<div
-					v-if="portfolio.profile.template_name === temp.id"
-					class="absolute top-4 right-4 z-10 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg shadow-emerald-200"
-				>
-					<Icon name="ph:check-circle-fill" /> AKTIF
-				</div>
+				Lihat Profil Publik
+				<Icon name="ph:arrow-up-right-bold" />
+			</NuxtLink>
+		</section>
 
-				<div
-					v-if="temp.isPro"
-					class="absolute top-4 left-4 z-10 bg-slate-900 text-amber-400 text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1"
-				>
-					<Icon name="ph:crown-fill" /> PRO
-				</div>
-
-				<div class="aspect-[4/3] overflow-hidden bg-slate-100">
+		<section class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+			<article
+				v-for="template in availableTemplates"
+				:key="template.id"
+				:class="[
+					'overflow-hidden rounded-lg border bg-white shadow-sm transition-colors',
+					activeTemplateName === template.id ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-slate-200 hover:border-emerald-300',
+				]"
+			>
+				<div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
 					<img
-						:src="temp.preview"
-						class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+						:src="template.preview"
+						:alt="`Preview ${template.name}`"
+						class="h-full w-full object-cover transition duration-500 hover:scale-105"
 					/>
+
+					<div class="absolute left-3 top-3 flex gap-2">
+						<span
+							v-if="template.isPro"
+							class="inline-flex items-center gap-1 rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-amber-300"
+						>
+							<Icon name="ph:crown-fill" />
+							Pro
+						</span>
+						<span
+							v-if="activeTemplateName === template.id"
+							class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white"
+						>
+							<Icon name="ph:check-circle-fill" />
+							Aktif
+						</span>
+					</div>
 				</div>
 
-				<div class="p-6">
-					<h3 class="font-bold text-slate-900 text-lg">{{ temp.name }}</h3>
-					<p class="text-slate-400 text-sm mt-1 mb-6">{{ temp.desc }}</p>
+				<div class="p-5">
+					<h3 class="font-black text-slate-950">{{ template.name }}</h3>
+					<p class="mt-2 min-h-12 text-sm leading-6 text-slate-600">{{ template.desc }}</p>
 
 					<button
-						@click="selectTemplate(temp.id, temp.isPro)"
-						:disabled="portfolio.isLoading || portfolio.profile.template_name === temp.id"
-						class="w-full py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2"
-						:class="
-							portfolio.profile.template_name === temp.id
-								? 'bg-emerald-50 text-emerald-600'
-								: 'bg-slate-900 text-white hover:bg-emerald-600 shadow-lg shadow-slate-200'
-						"
+						@click="selectTemplate(template.id, template.isPro)"
+						:disabled="portfolio.isLoading || activeTemplateName === template.id"
+						:class="[
+							'mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed',
+							activeTemplateName === template.id
+								? 'bg-emerald-50 text-emerald-700'
+								: 'bg-slate-950 text-white hover:bg-emerald-600 disabled:bg-slate-300',
+						]"
 					>
-						<span v-if="portfolio.profile.template_name === temp.id">Digunakan</span>
-						<span v-else>Pilih Template</span>
+						<Icon
+							v-if="portfolio.isLoading && activeTemplateName !== template.id"
+							name="ph:circle-notch-bold"
+							class="animate-spin"
+						/>
+						<span>{{ activeTemplateName === template.id ? "Digunakan" : "Pilih Template" }}</span>
 					</button>
 				</div>
-			</div>
-		</div>
-
-		<div
-			class="mt-16 bg-slate-900 rounded-[3rem] p-10 text-center text-white relative overflow-hidden"
-		>
-			<div class="relative z-10">
-				<h2 class="text-2xl font-bold mb-4">Ingin melihat hasilnya?</h2>
-				<p class="text-slate-400 mb-8 max-w-md mx-auto">
-					Lihat bagaimana tampilan portofoliomu di mata dunia dengan template terpilih.
-				</p>
-				<NuxtLink
-					:to="`/${portfolio.profile.username}`"
-					target="_blank"
-					class="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all"
-				>
-					Lihat Profil Publik <Icon name="ph:arrow-square-out-bold" />
-				</NuxtLink>
-			</div>
-			<div
-				class="absolute -bottom-20 -right-20 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl"
-			></div>
-			<div class="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
-		</div>
+			</article>
+		</section>
 	</div>
 </template>
