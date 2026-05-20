@@ -1,207 +1,179 @@
-div
 <script setup lang="ts">
 definePageMeta({ layout: "dashboard" });
 
 const portfolio = usePortfolioStore();
 
-function handleProjectImageUpload(event: any, index: number) {
-	const file = event.target.files[0];
-	if (!file) return;
+function handleProjectImageUpload(event: Event, index: number) {
+	const input = event.target as HTMLInputElement;
+	const file = input.files?.[0];
+	const project = portfolio.projects[index];
 
-	(portfolio.projects[index] as any).pendingImageFile = file;
+	if (!file || !project) return;
 
-	if (portfolio.projects[index]) {
-		portfolio.projects[index].image_url = URL.createObjectURL(file);
-	}
-
-	// 3. Tandai ada perubahan
+	project.pendingImageFile = file;
+	project.image_url = URL.createObjectURL(file);
 	portfolio.hasUnsavedChanges = true;
 }
 </script>
 
 <template>
 	<div class="relative">
-		<div class="flex h-[calc(100vh-160px)] gap-10">
-			<div class="flex-1 overflow-y-auto pr-4 no-scrollbar pb-20">
-				<div class="flex justify-between items-center mb-8">
+		<div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
+			<section class="min-w-0 space-y-5 pb-24">
+				<div class="flex flex-col justify-between gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center">
 					<div>
-						<h1 class="text-3xl font-black tracking-tight">Project Saya</h1>
-						<p class="text-slate-500 mt-1">Pamerkan karya terbaikmu di sini.</p>
+						<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Projects</p>
+						<h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950">Project Saya</h1>
+						<p class="mt-1 text-sm text-slate-600">Susun karya terbaik yang akan tampil di halaman publik.</p>
 					</div>
 					<button
 						@click="portfolio.addProject"
-						class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-100 flex items-center gap-2"
+						class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
 					>
-						<Icon name="ph:plus-bold" /> Tambah Project
+						<Icon name="ph:plus-bold" />
+						Tambah Project
 					</button>
 				</div>
 
 				<div
 					v-if="portfolio.projects.length === 0"
-					class="bg-white border-2 border-dashed border-slate-200 rounded-[2rem] p-12 text-center"
+					class="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center shadow-sm"
 				>
-					<div
-						class="bg-slate-50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl"
-					>
-						📁
+					<div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+						<Icon name="ph:briefcase-bold" size="28" />
 					</div>
-					<h3 class="font-bold text-slate-900">Belum ada project</h3>
-					<p class="text-slate-400 text-sm mt-1">
-						Klik tombol di atas untuk mulai memamerkan karyamu.
-					</p>
+					<h3 class="font-black text-slate-950">Belum ada project</h3>
+					<p class="mt-1 text-sm text-slate-500">Tambahkan project pertama untuk membuat profilmu lebih meyakinkan.</p>
 				</div>
 
-				<div class="space-y-6">
-					<div
+				<div class="space-y-4">
+					<article
 						v-for="(project, index) in portfolio.projects"
-						:key="index"
-						class="group relative bg-white border border-slate-200 rounded-[2rem] p-6 hover:border-emerald-300 transition-all shadow-sm"
+						:key="project.id || index"
+						class="group rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-emerald-300"
 					>
-						<button
-							@click="portfolio.deleteProject(index, project.image_url)"
-							class="absolute top-4 right-4 z-10 p-2 text-slate-400 opacity-0 transition-colors group-hover:opacity-100 hover:text-red-500"
-							title="Hapus Project"
-						>
-							<Icon name="ph:trash-bold" size="20" />
-						</button>
-
-						<div class="flex flex-col md:flex-row gap-6">
-							<div class="w-full shrink-0 md:w-40">
-								<div
-									class="relative aspect-video md:aspect-square bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 group"
-								>
-									<img
-										v-if="project.image_url"
-										:src="project.image_url"
-										class="w-full h-full object-cover"
-									/>
-									<div
-										v-else
-										class="w-full h-full flex flex-col items-center justify-center text-slate-300 text-[10px] font-bold"
-									>
-										<Icon name="ph:image-square-bold" size="24" class="mb-1" />
-										NO IMAGE
+						<div class="flex flex-col gap-5 md:flex-row">
+							<div class="w-full shrink-0 md:w-44">
+								<div class="relative aspect-video overflow-hidden rounded-lg border border-slate-200 bg-slate-100 md:aspect-square">
+									<img v-if="project.image_url" :src="project.image_url" class="h-full w-full object-cover" alt="" />
+									<div v-else class="flex h-full w-full flex-col items-center justify-center text-xs font-bold uppercase tracking-wide text-slate-400">
+										<Icon name="ph:image-square-bold" size="26" class="mb-2" />
+										No Image
 									</div>
 
-									<label
-										class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all duration-300"
-									>
-										<input
-											type="file"
-											class="hidden"
-											accept="image/*"
-											@change="handleProjectImageUpload($event, index)"
-										/>
-										<span
-											class="text-white text-[10px] font-bold bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30"
-										>
-											{{ project.image_url ? "GANTI" : "UPLOAD" }}
+									<label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-slate-950/60 opacity-0 transition-opacity group-hover:opacity-100">
+										<input type="file" class="hidden" accept="image/*" @change="handleProjectImageUpload($event, index)" />
+										<span class="rounded-lg bg-white px-3 py-2 text-xs font-black uppercase tracking-wide text-slate-950">
+											{{ project.image_url ? "Ganti" : "Upload" }}
 										</span>
 									</label>
 								</div>
 							</div>
 
-							<div class="flex-1 space-y-4">
-								<div>
+							<div class="min-w-0 flex-1 space-y-4">
+								<div class="flex items-start gap-3">
 									<input
 										v-model="project.title"
-										placeholder="Judul Project (Contoh: E-Commerce App)"
-										class="w-full bg-transparent text-xl font-black text-slate-800 outline-none transition-colors focus:text-emerald-600"
+										placeholder="Judul project"
+										class="min-w-0 flex-1 bg-transparent text-xl font-black text-slate-900 outline-none placeholder:text-slate-300 focus:text-emerald-700"
 										@input="portfolio.hasUnsavedChanges = true"
 									/>
+									<button
+										@click="portfolio.deleteProject(index, project.image_url)"
+										class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+										title="Hapus project"
+									>
+										<Icon name="ph:trash-bold" size="19" />
+									</button>
 								</div>
 
 								<textarea
 									v-model="project.description"
-									placeholder="Ceritakan sedikit tentang project ini..."
-									rows="2"
-									class="w-full text-sm text-slate-500 outline-none resize-none bg-transparent border-none p-0 focus:ring-0"
+									placeholder="Ceritakan konteks, peran, atau hasil dari project ini."
+									rows="3"
+									class="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white"
 									@input="portfolio.hasUnsavedChanges = true"
 								></textarea>
 
-								<div
-									class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100"
-								>
+								<div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3">
 									<Icon name="ph:link-bold" class="text-slate-400" />
 									<input
 										v-model="project.link_url"
 										placeholder="https://project-kamu.com"
-										class="bg-transparent text-xs font-mono w-full outline-none text-emerald-600"
+										class="min-w-0 flex-1 bg-transparent font-mono text-xs text-emerald-700 outline-none placeholder:text-slate-400"
 										@input="portfolio.hasUnsavedChanges = true"
 									/>
 								</div>
 							</div>
 						</div>
-					</div>
+					</article>
 				</div>
-			</div>
+			</section>
 
-			<div class="hidden xl:flex w-[380px] flex-col">
-				<div
-					class="relative w-full aspect-[9/18.5] bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[8px] border-slate-800"
-				>
-					<div class="w-full h-full bg-white rounded-[2.8rem] overflow-hidden flex flex-col">
-						<div class="flex-1 overflow-y-auto no-scrollbar p-6">
-							<div
-								class="w-12 h-12 rounded-full bg-slate-100 mx-auto mb-3 overflow-hidden border-2 border-white shadow-sm"
-							>
+			<aside class="hidden xl:block">
+				<div class="sticky top-24 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+					<div class="mb-4 flex items-center justify-between">
+						<div>
+							<p class="text-sm font-black text-slate-950">Preview</p>
+							<p class="text-xs text-slate-500">Tampilan ringkas profil publik</p>
+						</div>
+						<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Live</span>
+					</div>
+
+					<div class="rounded-[2rem] border-[10px] border-slate-900 bg-slate-900 p-2 shadow-xl">
+						<div class="h-[640px] overflow-y-auto rounded-[1.45rem] bg-white p-5">
+							<div class="mx-auto mb-3 h-14 w-14 overflow-hidden rounded-full bg-slate-100">
 								<img
-									:src="portfolio.profile.avatar_url"
 									v-if="portfolio.profile.avatar_url"
-									class="w-full h-full object-cover"
+									:src="portfolio.profile.avatar_url"
+									class="h-full w-full object-cover"
+									alt=""
 								/>
 							</div>
-							<p class="text-[10px] font-black text-center uppercase tracking-tighter">
+							<p class="truncate text-center text-xs font-black uppercase tracking-wide">
 								{{ portfolio.profile.full_name || "Your Name" }}
 							</p>
+							<p class="mt-1 line-clamp-2 text-center text-[10px] text-slate-500">
+								{{ portfolio.profile.bio || "Bio singkat akan tampil di sini." }}
+							</p>
 
-							<div class="mt-8 space-y-4">
+							<div class="mt-6 space-y-3">
 								<div
-									v-for="p in portfolio.projects"
-									:key="p.id"
-									class="overflow-hidden rounded-2xl border border-slate-100 shadow-sm"
+									v-for="project in portfolio.projects"
+									:key="project.id"
+									class="overflow-hidden rounded-lg border border-slate-200 bg-white"
 								>
-									<div class="aspect-video bg-slate-50">
-										<img v-if="p.image_url" :src="p.image_url" class="w-full h-full object-cover" />
+									<div class="aspect-video bg-slate-100">
+										<img v-if="project.image_url" :src="project.image_url" class="h-full w-full object-cover" alt="" />
 									</div>
 									<div class="p-3">
-										<p class="text-[10px] font-black truncate">{{ p.title || "Project Title" }}</p>
-										<p class="text-[8px] text-slate-400 line-clamp-1 mt-1">
-											{{ p.description || "Description goes here..." }}
+										<p class="truncate text-xs font-black">{{ project.title || "Project Title" }}</p>
+										<p class="mt-1 line-clamp-1 text-[10px] text-slate-500">
+											{{ project.description || "Description goes here..." }}
 										</p>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-
-					<div
-						class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-slate-800 rounded-b-3xl"
-					></div>
 				</div>
-				<p class="text-center mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-					Preview Mode
-				</p>
-			</div>
+			</aside>
 		</div>
 
-		<!-- Save Changes Bar -->
 		<Transition name="slide-up">
 			<div
 				v-if="portfolio.hasUnsavedChanges"
-				class="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white/80 p-4 backdrop-blur-sm md:left-64"
+				class="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 p-4 backdrop-blur lg:left-72"
 			>
-				<div class="mx-auto flex max-w-4xl items-center justify-between">
-					<p class="text-sm font-medium text-slate-600">
-						Kamu punya perubahan yang belum disimpan.
-					</p>
+				<div class="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					<p class="text-sm font-semibold text-slate-700">Ada perubahan project yang belum disimpan.</p>
 					<button
 						@click="portfolio.saveProjects"
-						class="flex items-center gap-2 rounded-2xl bg-slate-900 px-8 py-3 font-bold text-white shadow-lg shadow-slate-200 transition-all hover:bg-emerald-600 disabled:bg-slate-300"
+						class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600 disabled:bg-slate-300"
 						:disabled="portfolio.isLoading"
 					>
 						<Icon v-if="portfolio.isLoading" name="ph:circle-notch-bold" class="animate-spin" />
-						<span v-else>Simpan Perubahan</span>
+						<span>{{ portfolio.isLoading ? "Menyimpan..." : "Simpan Perubahan" }}</span>
 					</button>
 				</div>
 			</div>
@@ -210,20 +182,13 @@ function handleProjectImageUpload(event: any, index: number) {
 </template>
 
 <style scoped>
-.no-scrollbar::-webkit-scrollbar {
-	display: none;
-}
-.no-scrollbar {
-	-ms-overflow-style: none;
-	scrollbar-width: none;
-}
-
 .slide-up-enter-active,
 .slide-up-leave-active {
-	transition: transform 0.3s ease-out;
+	transition: transform 0.2s ease, opacity 0.2s ease;
 }
 .slide-up-enter-from,
 .slide-up-leave-to {
+	opacity: 0;
 	transform: translateY(100%);
 }
 </style>
