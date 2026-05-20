@@ -14,6 +14,17 @@ interface Project {
 	pendingImageFile?: File;
 }
 
+const createProjectId = () => {
+	if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+		return crypto.randomUUID();
+	}
+
+	return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (char) => {
+		const value = Number(char);
+		return (value ^ (Math.random() * 16) >> (value / 4)).toString(16);
+	});
+};
+
 export const usePortfolioStore = defineStore("portfolio", {
 	state: () => {
 		return {
@@ -30,6 +41,7 @@ export const usePortfolioStore = defineStore("portfolio", {
 			pendingAvatarFile: null as File | null,
 			hasUnsavedChanges: false,
 			isLoading: false,
+			deletingProjectId: null as string | null,
 		};
 	},
 
@@ -172,14 +184,12 @@ export const usePortfolioStore = defineStore("portfolio", {
 
 		addProject() {
 			const newProject = {
-				// ID sementara untuk keperluan :key di v-for
-				// Pakai Date.now() tapi tandai sebagai "temp"
-				id: `temp-${Date.now()}`,
+				id: createProjectId(),
 				title: "",
 				description: "",
 				link_url: "",
 				image_url: null,
-				is_new: true, // Flag untuk tahu ini harus di-INSERT bukan UPDATE
+				is_new: true,
 			};
 			this.projects.push(newProject);
 			this.hasUnsavedChanges = true;
@@ -218,13 +228,24 @@ export const usePortfolioStore = defineStore("portfolio", {
 
 				await Promise.all(uploadPromises);
 
-				// 2. Prepare data for upsert
-				const projectsToSave = this.projects.map((p) => {
-					const { is_new, ...rest } = p;
+				// 2. Prepare data for upsert. The projects.id column is not nullable,
+				// so new rows must carry a real UUID instead of relying on DB defaults.
+				const projectsToSave = this.projects.map((p, index) => {
+					const isTemporaryId = !p.id || p.id.startsWith("temp-");
+					const projectId = isTemporaryId ? createProjectId() : p.id;
+
+					if (isTemporaryId) {
+						p.id = projectId;
+					}
+
 					return {
-						...rest,
-						id: is_new ? undefined : p.id, // Let database generate ID for new ones
+						id: projectId,
 						profile_id: userId,
+						title: p.title,
+						description: p.description,
+						image_url: p.image_url,
+						link_url: p.link_url,
+						sort_order: p.sort_order ?? index,
 					};
 				});
 
@@ -266,15 +287,15 @@ export const usePortfolioStore = defineStore("portfolio", {
 			const supabase = useSupabaseClient();
 
 			if (!project) {
-				alert("Project tidak ditemukan!");
+				toast.error("Project tidak ditemukan.");
 				return;
 			}
 
-			// Konfirmasi ke user
-			if (!confirm("Apakah Anda yakin ingin menghapus project ini?")) return;
+			const projectId = project.id || `project-${index}`;
+			this.deletingProjectId = projectId;
 
 			try {
-				if (project.id && !project.id.toString().includes("temp")) {
+				if (project.id && !project.is_new && !project.id.toString().includes("temp")) {
 					if (imageUrl && imageUrl.includes("portobit")) {
 						const path = imageUrl.split("/storage/v1/object/public/portobit/")[1];
 						if (path) await supabase.storage.from("portobit").remove([decodeURIComponent(path)]);
@@ -285,15 +306,19 @@ export const usePortfolioStore = defineStore("portfolio", {
 					if (dbError) throw dbError;
 				}
 
-				// KONDISI 3: Hapus dari array lokal (State Pinia) agar UI terupdate
 				this.projects.splice(index, 1);
 
-				// Tandai ada perubahan jika kita menghapus project yang baru saja dibuat
-				this.hasUnsavedChanges = true;
+				if (project.is_new) {
+					this.hasUnsavedChanges = this.projects.some((item) => item.is_new || item.pendingImageFile);
+				}
 
-				console.log("Project berhasil dihapus");
+				toast.success("Project berhasil dihapus.");
 			} catch (err: any) {
-				alert("Gagal menghapus project: " + err.message);
+				toast.error("Gagal menghapus project", {
+					description: err.message || "Coba beberapa saat lagi.",
+				});
+			} finally {
+				this.deletingProjectId = null;
 			}
 		},
 	},
