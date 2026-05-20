@@ -6,87 +6,95 @@ definePageMeta({
 const portfolio = usePortfolioStore();
 
 const isProfileIncomplete = computed(() => {
-	return (
-		!portfolio.profile.username || !portfolio.profile.full_name || portfolio.projects.length === 0
-	);
+	return !portfolio.profile.username || !portfolio.profile.full_name || portfolio.projects.length === 0;
 });
+
+const metrics = computed(() => [
+	{
+		label: "Total View",
+		value: portfolio.profile.views_count || 0,
+		icon: "ph:eye-bold",
+		helper: "Akumulasi kunjungan profil",
+	},
+	{
+		label: "Projects",
+		value: portfolio.projects.length,
+		icon: "ph:briefcase-bold",
+		helper: "Karya yang tampil di profil",
+	},
+	{
+		label: "Status Akun",
+		value: "Free",
+		icon: "ph:shield-check-bold",
+		helper: "Paket aktif saat ini",
+	},
+]);
 </script>
 
 <template>
-	<div class="space-y-8">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			<div
-				class="p-8 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col justify-between h-48"
-			>
+	<div class="space-y-6">
+		<section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+			<div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
 				<div>
-					<div
-						class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 text-2xl"
-					>
-						👀
-					</div>
-					<p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Total View</p>
-				</div>
-				<h3 class="text-5xl font-black text-slate-900">{{ portfolio.profile.views_count }}</h3>
-			</div>
-
-			<div
-				class="p-8 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col justify-between h-48"
-			>
-				<div>
-					<div
-						class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 text-2xl"
-					>
-						📁
-					</div>
-					<p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Projects</p>
-				</div>
-				<h3 class="text-5xl font-black text-slate-900">{{ portfolio.projects.length }}</h3>
-			</div>
-
-			<div
-				class="p-8 bg-slate-900 rounded-[2.5rem] shadow-xl shadow-slate-200 text-white flex flex-col justify-between h-48 relative overflow-hidden group"
-			>
-				<div class="relative z-10">
-					<div
-						class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-4 text-2xl"
-					>
-						⚡
-					</div>
-					<p class="text-sm font-bold opacity-60 uppercase tracking-wider">Status Akun</p>
-				</div>
-				<h3 class="text-5xl font-black relative z-10">Free</h3>
-
-				<div
-					class="absolute -bottom-4 -right-4 w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity"
-				></div>
-			</div>
-		</div>
-
-		<div
-			v-if="isProfileIncomplete"
-			class="p-10 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-[2.5rem] shadow-xl shadow-emerald-100 text-white relative overflow-hidden"
-		>
-			<div
-				class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
-			>
-				<div>
-					<h3 class="text-3xl font-black">Profil kamu belum lengkap! 😱</h3>
-					<p class="text-emerald-100 mt-2 max-w-xl text-lg font-medium">
-						Portofolio yang lengkap meningkatkan peluang dilirik klien hingga 80%. Yuk lengkapi data
-						diri dan upload project pertamamu.
+					<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Overview</p>
+					<h2 class="mt-2 text-2xl font-black tracking-tight text-slate-950">
+						Ringkasan portofolio kamu
+					</h2>
+					<p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+						Pantau kelengkapan profil, jumlah project, dan performa dasar sebelum membagikan link ke calon klien.
 					</p>
 				</div>
 				<NuxtLink
+					to="/dashboard/projects"
+					class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
+				>
+					Kelola Project
+					<Icon name="ph:arrow-right-bold" />
+				</NuxtLink>
+			</div>
+		</section>
+
+		<section class="grid gap-4 md:grid-cols-3">
+			<article
+				v-for="metric in metrics"
+				:key="metric.label"
+				class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+			>
+				<div class="flex items-center justify-between">
+					<div class="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-100 text-slate-900">
+						<Icon :name="metric.icon" size="23" />
+					</div>
+					<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Live</span>
+				</div>
+				<p class="mt-5 text-sm font-bold uppercase tracking-wide text-slate-500">{{ metric.label }}</p>
+				<p class="mt-2 text-4xl font-black tracking-tight text-slate-950">{{ metric.value }}</p>
+				<p class="mt-2 text-sm text-slate-500">{{ metric.helper }}</p>
+			</article>
+		</section>
+
+		<section
+			v-if="isProfileIncomplete"
+			class="rounded-lg border border-emerald-200 bg-emerald-50 p-6 shadow-sm"
+		>
+			<div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+				<div class="flex gap-4">
+					<div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-white">
+						<Icon name="ph:warning-circle-bold" size="24" />
+					</div>
+					<div>
+						<h3 class="text-lg font-black text-slate-950">Profil belum lengkap</h3>
+						<p class="mt-1 max-w-2xl text-sm leading-6 text-slate-700">
+							Lengkapi nama, username, dan project pertama supaya halaman publik terlihat siap dikirim.
+						</p>
+					</div>
+				</div>
+				<NuxtLink
 					to="/dashboard/settings"
-					class="px-8 py-4 bg-white text-emerald-600 font-black rounded-2xl shadow-lg hover:scale-105 transition-transform whitespace-nowrap"
+					class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-bold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition-colors hover:bg-emerald-100"
 				>
 					Lengkapi Sekarang
 				</NuxtLink>
 			</div>
-
-			<div
-				class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"
-			></div>
-		</div>
+		</section>
 	</div>
 </template>
