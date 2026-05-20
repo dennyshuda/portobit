@@ -114,6 +114,7 @@ export const usePortfolioStore = defineStore("portfolio", {
 						bio: this.profile.bio,
 						avatar_url: finalAvatarUrl,
 						theme_color: this.profile.theme_color,
+						template_name: this.profile.template_name || "modern",
 					})
 					.eq("id", userId);
 
