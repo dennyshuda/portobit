@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { toast } from "vue-sonner";
+import { normalizeExternalUrl, normalizeSocialUrl } from "~/utils/links";
 
 interface Project {
 	id?: string;
@@ -36,6 +37,9 @@ export const usePortfolioStore = defineStore("portfolio", {
 				theme_color: "#10b981",
 				views_count: 0,
 				template_name: "",
+				instagram_url: "",
+				linkedin_url: "",
+				github_url: "",
 			},
 			projects: [] as Project[],
 			pendingAvatarFile: null as File | null,
@@ -70,6 +74,9 @@ export const usePortfolioStore = defineStore("portfolio", {
 					theme_color: data?.theme_color || "#10b981",
 					views_count: data?.views_count || 0,
 					template_name: data?.template_name || "",
+					instagram_url: data?.instagram_url || "",
+					linkedin_url: data?.linkedin_url || "",
+					github_url: data?.github_url || "",
 				};
 
 				this.projects = data?.projects || [];
@@ -127,6 +134,9 @@ export const usePortfolioStore = defineStore("portfolio", {
 						avatar_url: finalAvatarUrl,
 						theme_color: this.profile.theme_color,
 						template_name: this.profile.template_name || "modern",
+						instagram_url: normalizeSocialUrl("instagram", this.profile.instagram_url),
+						linkedin_url: normalizeSocialUrl("linkedin", this.profile.linkedin_url),
+						github_url: normalizeSocialUrl("github", this.profile.github_url),
 					})
 					.eq("id", userId);
 
@@ -244,7 +254,7 @@ export const usePortfolioStore = defineStore("portfolio", {
 						title: p.title,
 						description: p.description,
 						image_url: p.image_url,
-						link_url: p.link_url,
+						link_url: normalizeExternalUrl(p.link_url),
 						sort_order: p.sort_order ?? index,
 					};
 				});

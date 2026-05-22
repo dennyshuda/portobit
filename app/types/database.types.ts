@@ -19,8 +19,11 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           full_name: string | null
+          github_url: string | null
           id: string
+          instagram_url: string | null
           is_pro: boolean | null
+          linkedin_url: string | null
           template_name: string | null
           theme_color: string | null
           updated_at: string | null
@@ -31,8 +34,11 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           full_name?: string | null
+          github_url?: string | null
           id: string
+          instagram_url?: string | null
           is_pro?: boolean | null
+          linkedin_url?: string | null
           template_name?: string | null
           theme_color?: string | null
           updated_at?: string | null
@@ -43,8 +49,11 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           full_name?: string | null
+          github_url?: string | null
           id?: string
+          instagram_url?: string | null
           is_pro?: boolean | null
+          linkedin_url?: string | null
           template_name?: string | null
           theme_color?: string | null
           updated_at?: string | null

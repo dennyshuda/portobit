@@ -9,4 +9,7 @@ export const profileSchema = z.object({
 		.lowercase("Username harus huruf kecil")
 		.max(20, "Username maksimal 20 karakter"),
 	bio: z.string().max(160, "Bio maksimal 160 karakter").optional(),
+	instagram_url: z.string().max(120, "Link Instagram terlalu panjang").optional(),
+	linkedin_url: z.string().max(160, "Link LinkedIn terlalu panjang").optional(),
+	github_url: z.string().max(120, "Link GitHub terlalu panjang").optional(),
 });
