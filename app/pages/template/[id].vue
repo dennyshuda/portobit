@@ -92,6 +92,24 @@ const dummyData = {
 				:profile="dummyData.profile"
 				:projects="dummyData.projects"
 			/>
+
+			<TemplatesGradient
+				v-if="templateId === 'gradient'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
+
+			<TemplatesGrid
+				v-if="templateId === 'grid'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
+
+			<TemplatesNightfall
+				v-if="templateId === 'nightfall'"
+				:profile="dummyData.profile"
+				:projects="dummyData.projects"
+			/>
 		</div>
 	</div>
 </template>

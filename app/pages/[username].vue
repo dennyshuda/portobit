@@ -7,6 +7,9 @@ import Modern from "~/components/templates/modern.vue";
 import Snapshot from "~/components/templates/snapshot.vue";
 import Studio from "~/components/templates/studio.vue";
 import Terminal from "~/components/templates/terminal.vue";
+import Gradient from "~/components/templates/gradient.vue";
+import Grid from "~/components/templates/grid.vue";
+import Nightfall from "~/components/templates/nightfall.vue";
 
 definePageMeta({
 	layout: false,
@@ -29,6 +32,9 @@ const templateComponents: Record<string, any> = {
 	snapshot: Snapshot,
 	studio: Studio,
 	terminal: Terminal,
+	gradient: Gradient,
+	grid: Grid,
+	nightfall: Nightfall,
 };
 
 const activeTemplate = computed(() => {
@@ -115,7 +121,9 @@ onMounted(() => {
 <template>
 	<div>
 		<div v-if="loading" class="flex h-screen items-center justify-center bg-white">
-			<div class="h-12 w-12 animate-spin rounded-full border-2 border-slate-200 border-t-emerald-500"></div>
+			<div
+				class="h-12 w-12 animate-spin rounded-full border-2 border-slate-200 border-t-emerald-500"
+			></div>
 		</div>
 
 		<div

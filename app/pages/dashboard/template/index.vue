@@ -72,6 +72,30 @@ const availableTemplates = [
 			"https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop",
 		isPro: true,
 	},
+	{
+		id: "gradient",
+		name: "Gradient Glass",
+		desc: "Desain modern dengan gradien dan efek glassmorphism yang elegan.",
+		preview:
+			"https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=800&auto=format&fit=crop",
+		isPro: false,
+	},
+	{
+		id: "grid",
+		name: "Bento Grid",
+		desc: "Layout bento grid yang unik dengan kotak-kotak dinamis untuk karya kamu.",
+		preview:
+			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
+		isPro: false,
+	},
+	{
+		id: "nightfall",
+		name: "Nightfall",
+		desc: "Tema dark premium dengan animasi gradien dan efek sinematik.",
+		preview:
+			"https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=800&auto=format&fit=crop",
+		isPro: true,
+	},
 ];
 
 const activeTemplateName = computed(() => portfolio.profile.template_name || "modern");
@@ -118,10 +142,14 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 
 <template>
 	<div class="space-y-6">
-		<section class="flex flex-col justify-between gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center">
+		<section
+			class="flex flex-col justify-between gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center"
+		>
 			<div>
 				<p class="text-sm font-bold uppercase tracking-wider text-emerald-600">Template</p>
-				<h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950">Pilih tampilan portofolio</h1>
+				<h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950">
+					Pilih tampilan portofolio
+				</h1>
 				<p class="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
 					Template yang dipilih akan langsung dipakai di halaman publik kamu.
 				</p>
@@ -143,7 +171,9 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 				:key="template.id"
 				:class="[
 					'overflow-hidden rounded-lg border bg-white shadow-sm transition-colors',
-					activeTemplateName === template.id ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-slate-200 hover:border-emerald-300',
+					activeTemplateName === template.id
+						? 'border-emerald-500 ring-2 ring-emerald-100'
+						: 'border-slate-200 hover:border-emerald-300',
 				]"
 			>
 				<div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
