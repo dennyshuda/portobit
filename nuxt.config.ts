@@ -1,4 +1,5 @@
 export default defineNuxtConfig({
+	buildDir: ".nuxt-build",
 	app: {
 		head: {
 			htmlAttrs: {
@@ -20,6 +21,11 @@ export default defineNuxtConfig({
 	},
 	compatibilityDate: "2025-07-15",
 	devtools: { enabled: true },
+	nitro: {
+		externals: {
+			trace: false,
+		},
+	},
 	modules: ["@nuxtjs/tailwindcss", "@nuxtjs/supabase", "@pinia/nuxt", "@nuxt/icon"],
 	supabase: {
 		redirectOptions: {
