@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import Minimalist from "~/components/Minimalist.vue";
-import Creative from "~/components/Creative.vue";
-import Professional from "~/components/Professional.vue";
+import Minimalist from "~/components/templates/demo-minimalist.vue";
+import Creative from "~/components/templates/demo-creative.vue";
+import Professional from "~/components/templates/demo-professional.vue";
 
 definePageMeta({
 	layout: "default",
