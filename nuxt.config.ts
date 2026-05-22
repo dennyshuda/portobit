@@ -1,3 +1,5 @@
+const isVercel = process.env.VERCEL === "1";
+
 export default defineNuxtConfig({
 	buildDir: ".nuxt-build",
 	app: {
@@ -23,7 +25,8 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	nitro: {
 		externals: {
-			trace: false,
+			// Keep Vercel tracing enabled so serverless functions include runtime dependencies.
+			trace: isVercel,
 		},
 	},
 	icon: {
