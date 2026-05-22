@@ -164,6 +164,53 @@ function handleAvatarUpload(event: Event) {
 						></textarea>
 						<p v-if="errors.bio" class="text-xs text-red-600">{{ errors.bio[0] }}</p>
 					</div>
+
+					<div class="grid gap-4 md:grid-cols-3">
+						<div class="space-y-2">
+							<label class="text-sm font-black text-slate-800">Instagram</label>
+							<div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-emerald-400 focus-within:bg-white">
+								<Icon name="ph:instagram-logo-bold" class="shrink-0 text-slate-400" />
+								<input
+									v-model="portfolio.profile.instagram_url"
+									type="text"
+									class="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+									placeholder="@username"
+									@input="portfolio.hasUnsavedChanges = true"
+								/>
+							</div>
+							<p v-if="errors.instagram_url" class="text-xs text-red-600">{{ errors.instagram_url[0] }}</p>
+						</div>
+
+						<div class="space-y-2">
+							<label class="text-sm font-black text-slate-800">LinkedIn</label>
+							<div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-emerald-400 focus-within:bg-white">
+								<Icon name="ph:linkedin-logo-bold" class="shrink-0 text-slate-400" />
+								<input
+									v-model="portfolio.profile.linkedin_url"
+									type="text"
+									class="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+									placeholder="username atau URL"
+									@input="portfolio.hasUnsavedChanges = true"
+								/>
+							</div>
+							<p v-if="errors.linkedin_url" class="text-xs text-red-600">{{ errors.linkedin_url[0] }}</p>
+						</div>
+
+						<div class="space-y-2">
+							<label class="text-sm font-black text-slate-800">GitHub</label>
+							<div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-emerald-400 focus-within:bg-white">
+								<Icon name="ph:github-logo-bold" class="shrink-0 text-slate-400" />
+								<input
+									v-model="portfolio.profile.github_url"
+									type="text"
+									class="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+									placeholder="username"
+									@input="portfolio.hasUnsavedChanges = true"
+								/>
+							</div>
+							<p v-if="errors.github_url" class="text-xs text-red-600">{{ errors.github_url[0] }}</p>
+						</div>
+					</div>
 				</div>
 			</section>
 		</div>

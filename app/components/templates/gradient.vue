@@ -34,6 +34,11 @@ defineProps<{
 						Available for work
 					</span>
 				</div>
+				<PortfolioSocialLinks
+					:profile="profile"
+					link-class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-500 shadow-lg shadow-purple-100 transition-colors hover:text-purple-600"
+					class="mt-6"
+				/>
 			</div>
 		</header>
 
@@ -86,10 +91,9 @@ defineProps<{
 					</p>
 
 					<!-- Link -->
-					<a
-						v-if="project.link_url"
-						:href="project.link_url"
-						target="_blank"
+					<PortfolioProjectLink
+						:url="project.link_url"
+						hide-when-empty
 						class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-purple-600 transition-colors hover:text-pink-600"
 					>
 						View Project
@@ -97,7 +101,7 @@ defineProps<{
 							name="ph:arrow-up-right-bold"
 							class="transition-transform group-hover:translate-x-1"
 						/>
-					</a>
+					</PortfolioProjectLink>
 				</div>
 			</div>
 		</main>
@@ -108,23 +112,11 @@ defineProps<{
 				<p class="text-sm font-bold uppercase tracking-[0.3em] text-slate-400">
 					&copy; {{ new Date().getFullYear() }} Portobit
 				</p>
-				<div class="flex gap-8">
-					<a
-						href="#"
-						class="text-sm font-bold text-slate-400 transition-colors hover:text-purple-600"
-						>Instagram</a
-					>
-					<a
-						href="#"
-						class="text-sm font-bold text-slate-400 transition-colors hover:text-purple-600"
-						>LinkedIn</a
-					>
-					<a
-						href="#"
-						class="text-sm font-bold text-slate-400 transition-colors hover:text-purple-600"
-						>Twitter</a
-					>
-				</div>
+				<PortfolioSocialLinks
+					:profile="profile"
+					mode="labels"
+					link-class="text-sm font-bold text-slate-400 transition-colors hover:text-purple-600"
+				/>
 			</div>
 		</footer>
 	</div>

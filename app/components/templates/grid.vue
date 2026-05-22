@@ -37,24 +37,13 @@ defineProps<{
 				</div>
 
 				<!-- Social - spans 1 col -->
-				<div class="flex items-center gap-3 rounded-3xl bg-slate-50 p-6">
-					<div class="flex -space-x-2">
-						<div
-							class="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-xs font-black text-sky-600 ring-2 ring-white"
-						>
-							IG
-						</div>
-						<div
-							class="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-xs font-black text-sky-600 ring-2 ring-white"
-						>
-							LI
-						</div>
-						<div
-							class="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-xs font-black text-sky-600 ring-2 ring-white"
-						>
-							GH
-						</div>
-					</div>
+				<div class="flex items-center rounded-3xl bg-slate-50 p-6">
+					<PortfolioSocialLinks
+						:profile="profile"
+						mode="compact"
+						link-class="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-xs font-black text-sky-600 ring-2 ring-white transition-colors hover:bg-sky-600 hover:text-white"
+						class="-space-x-2"
+					/>
 				</div>
 
 				<!-- Bio - spans 3 cols -->
@@ -101,14 +90,13 @@ defineProps<{
 								<p class="mb-4 text-sm leading-relaxed text-slate-500">
 									{{ project.description || "Description" }}
 								</p>
-								<a
-									v-if="project.link_url"
-									:href="project.link_url"
-									target="_blank"
+								<PortfolioProjectLink
+									:url="project.link_url"
+									hide-when-empty
 									class="inline-flex items-center gap-2 text-sm font-bold text-sky-600"
 								>
 									View <Icon name="ph:arrow-up-right-bold" />
-								</a>
+								</PortfolioProjectLink>
 							</div>
 						</div>
 					</div>
@@ -131,6 +119,13 @@ defineProps<{
 						</p>
 						<h3 class="mb-2 text-xl font-black">{{ project.title || "Project Title" }}</h3>
 						<p class="text-sm text-slate-500">{{ project.description || "Description" }}</p>
+						<PortfolioProjectLink
+							:url="project.link_url"
+							hide-when-empty
+							class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-sky-600"
+						>
+							View <Icon name="ph:arrow-up-right-bold" />
+						</PortfolioProjectLink>
 					</div>
 
 					<!-- Every 3rd+: spans 2 cols -->
@@ -149,14 +144,13 @@ defineProps<{
 								<p class="mb-4 text-sm leading-relaxed text-slate-500">
 									{{ project.description || "Description" }}
 								</p>
-								<a
-									v-if="project.link_url"
-									:href="project.link_url"
-									target="_blank"
+								<PortfolioProjectLink
+									:url="project.link_url"
+									hide-when-empty
 									class="inline-flex items-center gap-2 text-sm font-bold text-sky-600"
 								>
 									View <Icon name="ph:arrow-up-right-bold" />
-								</a>
+								</PortfolioProjectLink>
 							</div>
 							<div
 								class="aspect-video overflow-hidden rounded-2xl bg-slate-200 md:w-1/2 md:order-1"

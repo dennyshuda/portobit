@@ -17,6 +17,12 @@ defineProps<{
 					{{ profile.bio || "A high-contrast premium portfolio for bold professional presentation." }}
 				</p>
 			</div>
+			<PortfolioSocialLinks
+				:profile="profile"
+				mode="labels"
+				link-class="text-xs font-black uppercase tracking-[0.25em] text-neutral-500 transition-colors hover:text-white"
+				class="mt-8"
+			/>
 		</header>
 
 		<main class="mx-auto max-w-7xl px-6 pb-28">
@@ -32,15 +38,14 @@ defineProps<{
 						<p class="mt-4 max-w-2xl text-sm leading-7 text-neutral-400">
 							{{ project.description || "Project description goes here." }}
 						</p>
-						<a
-							v-if="project.link_url"
-							:href="project.link_url"
-							target="_blank"
+						<PortfolioProjectLink
+							:url="project.link_url"
+							hide-when-empty
 							class="mt-6 inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-white"
 						>
 							Open
 							<Icon name="ph:arrow-up-right-bold" />
-						</a>
+						</PortfolioProjectLink>
 					</div>
 					<div class="aspect-video overflow-hidden rounded-lg bg-neutral-900">
 						<img

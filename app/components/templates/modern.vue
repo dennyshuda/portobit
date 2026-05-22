@@ -13,7 +13,12 @@ defineProps<{
 			<img :src="profile.avatar_url" class="w-full h-full object-cover" />
 		</div>
 		<h2 class="text-4xl font-black mb-2 text-slate-900">{{ profile.full_name }}</h2>
-		<p class="text-slate-500 max-w-md mx-auto mb-12">{{ profile.bio }}</p>
+		<p class="text-slate-500 max-w-md mx-auto mb-6">{{ profile.bio }}</p>
+		<PortfolioSocialLinks
+			:profile="profile"
+			link-class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:border-emerald-300 hover:text-emerald-600"
+			class="mb-12 justify-center"
+		/>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-4xl mx-auto">
 			<div
@@ -29,6 +34,14 @@ defineProps<{
 				</div>
 				<h4 class="font-bold text-slate-900 px-2">{{ p.title }}</h4>
 				<p class="text-sm text-slate-500 px-2 pb-2">{{ p.description }}</p>
+				<PortfolioProjectLink
+					:url="p.link_url"
+					hide-when-empty
+					class="mx-2 mt-3 inline-flex items-center gap-2 text-xs font-black uppercase tracking-wide text-emerald-600"
+				>
+					View Project
+					<Icon name="ph:arrow-up-right-bold" />
+				</PortfolioProjectLink>
 			</div>
 		</div>
 	</div>

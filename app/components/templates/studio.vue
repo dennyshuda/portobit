@@ -22,6 +22,11 @@ defineProps<{
 					<p class="mt-6 max-w-2xl text-lg leading-8 text-zinc-600">
 						{{ profile.bio || "A clean visual portfolio for creators, designers, and independent studios." }}
 					</p>
+					<PortfolioSocialLinks
+						:profile="profile"
+						link-class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-zinc-500 ring-1 ring-zinc-200 transition-colors hover:text-rose-600"
+						class="mt-6"
+					/>
 				</div>
 			</div>
 		</header>
@@ -49,6 +54,14 @@ defineProps<{
 						<p class="mt-2 line-clamp-2 text-sm leading-6 text-zinc-600">
 							{{ project.description || "Project description goes here." }}
 						</p>
+						<PortfolioProjectLink
+							:url="project.link_url"
+							hide-when-empty
+							class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-rose-600"
+						>
+							View project
+							<Icon name="ph:arrow-up-right-bold" />
+						</PortfolioProjectLink>
 					</div>
 				</article>
 			</section>

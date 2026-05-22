@@ -12,7 +12,11 @@ const props = defineProps<{
 		<div class="container mx-auto px-6 py-20 max-w-6xl">
 			<nav class="flex justify-between items-center mb-24 border-b-4 border-black pb-6">
 				<div class="font-sans font-black text-2xl tracking-tighter">PORTFOLIO.</div>
-				<a class="font-sans font-bold hover:underline decoration-4 underline-offset-4">HIRE ME</a>
+				<PortfolioSocialLinks
+					:profile="profile"
+					mode="labels"
+					link-class="font-sans text-xs font-black uppercase tracking-[0.2em] hover:underline decoration-4 underline-offset-4"
+				/>
 			</nav>
 
 			<header class="mb-32">
@@ -52,6 +56,14 @@ const props = defineProps<{
 							{{ project.title }}
 						</h3>
 						<p class="text-xl font-sans font-medium leading-relaxed">{{ project.description }}</p>
+						<PortfolioProjectLink
+							:url="project.link_url"
+							hide-when-empty
+							class="mt-8 inline-flex items-center gap-3 border-4 border-black bg-white px-5 py-3 font-sans text-xs font-black uppercase tracking-[0.2em] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]"
+						>
+							View Project
+							<Icon name="ph:arrow-up-right-bold" />
+						</PortfolioProjectLink>
 					</div>
 				</div>
 			</section>

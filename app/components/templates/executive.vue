@@ -21,6 +21,11 @@ defineProps<{
 					{{ profile.bio || "A focused professional portfolio for consultants, founders, and senior specialists." }}
 				</p>
 			</div>
+			<PortfolioSocialLinks
+				:profile="profile"
+				link-class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-slate-400 transition-colors hover:border-emerald-300/50 hover:text-emerald-300"
+				class="mt-8"
+			/>
 		</header>
 
 		<main class="mx-auto max-w-6xl px-6 pb-24">
@@ -51,15 +56,14 @@ defineProps<{
 						<p class="mt-3 text-sm leading-6 text-slate-400">
 							{{ project.description || "Project description goes here." }}
 						</p>
-						<a
-							v-if="project.link_url"
-							:href="project.link_url"
-							target="_blank"
+						<PortfolioProjectLink
+							:url="project.link_url"
+							hide-when-empty
 							class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-white transition-colors hover:text-emerald-300"
 						>
 							View project
 							<Icon name="ph:arrow-up-right-bold" />
-						</a>
+						</PortfolioProjectLink>
 					</div>
 				</article>
 			</section>

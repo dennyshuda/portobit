@@ -122,6 +122,7 @@ async function confirmDeleteProject() {
 										placeholder="https://project-kamu.com"
 										class="min-w-0 flex-1 bg-transparent font-mono text-xs text-emerald-700 outline-none placeholder:text-slate-400"
 										@input="portfolio.hasUnsavedChanges = true"
+										@blur="project.link_url = normalizeExternalUrl(project.link_url)"
 									/>
 								</div>
 							</div>

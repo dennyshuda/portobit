@@ -25,6 +25,12 @@ defineProps<{
 						<span class="text-slate-400">Based in Jakarta</span>
 					</div>
 				</div>
+				<PortfolioSocialLinks
+					:profile="profile"
+					mode="labels"
+					link-class="font-sans text-[10px] font-black uppercase tracking-[0.3em] transition-colors hover:text-slate-400"
+					class="mt-8"
+				/>
 			</div>
 		</header>
 
@@ -51,17 +57,16 @@ defineProps<{
 									</p>
 								</div>
 
-								<a
-									v-if="project.link_url"
-									:href="project.link_url"
-									target="_blank"
+								<PortfolioProjectLink
+									:url="project.link_url"
+									hide-when-empty
 									class="group/link inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] font-black"
 								>
 									View Case
 									<div
 										class="w-8 h-px bg-black group-hover/link:w-16 transition-all duration-500"
 									></div>
-								</a>
+								</PortfolioProjectLink>
 							</div>
 						</div>
 					</div>
@@ -75,11 +80,11 @@ defineProps<{
 			<div class="font-sans text-[10px] uppercase tracking-[0.4em] font-bold">
 				©{{ new Date().getFullYear() }} Portobit
 			</div>
-			<div class="flex gap-8 font-sans text-[10px] uppercase tracking-[0.4em] font-bold">
-				<a href="#" class="hover:text-slate-400">Instagram</a>
-				<a href="#" class="hover:text-slate-400">LinkedIn</a>
-				<a href="#" class="hover:text-slate-400">Twitter</a>
-			</div>
+			<PortfolioSocialLinks
+				:profile="profile"
+				mode="labels"
+				link-class="font-sans text-[10px] font-bold uppercase tracking-[0.4em] hover:text-slate-400"
+			/>
 		</footer>
 	</div>
 </template>

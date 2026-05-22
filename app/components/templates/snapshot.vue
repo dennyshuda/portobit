@@ -23,15 +23,19 @@ defineProps<{
 				<p class="mt-6 max-w-sm text-sm leading-6 text-slate-600">
 					{{ profile.bio || "A compact portfolio for quick scanning and fast decisions." }}
 				</p>
+				<PortfolioSocialLinks
+					:profile="profile"
+					link-class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-emerald-300 hover:text-emerald-600"
+					class="mt-6"
+				/>
 			</aside>
 
 			<main class="px-6 py-10">
 				<div class="space-y-4">
-					<a
+					<PortfolioProjectLink
 						v-for="(project, index) in projects"
 						:key="project.id || index"
-						:href="project.link_url || undefined"
-						target="_blank"
+						:url="project.link_url"
 						class="grid gap-4 rounded-lg border border-slate-200 p-4 transition-colors hover:border-emerald-300 hover:bg-slate-50 md:grid-cols-[160px_minmax(0,1fr)_auto]"
 					>
 						<div class="aspect-video overflow-hidden rounded-md bg-slate-100">
@@ -47,7 +51,7 @@ defineProps<{
 							</p>
 						</div>
 						<Icon name="ph:arrow-up-right-bold" class="hidden text-slate-300 md:block" />
-					</a>
+					</PortfolioProjectLink>
 				</div>
 			</main>
 		</div>

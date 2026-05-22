@@ -36,6 +36,12 @@ const today = new Date().toLocaleDateString("en-US", {
 					<p class="text-emerald-400/80 leading-relaxed max-w-2xl">
 						{{ profile.bio || "System Architect & Digital Nomad." }}
 					</p>
+					<PortfolioSocialLinks
+						:profile="profile"
+						mode="labels"
+						link-class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500 transition-colors hover:text-white"
+						class="mt-6"
+					/>
 				</div>
 			</header>
 
@@ -74,16 +80,15 @@ const today = new Date().toLocaleDateString("en-US", {
 							{{ project.description }}
 						</p>
 
-						<a
-							v-if="project.link_url"
-							:href="project.link_url"
-							target="_blank"
+						<PortfolioProjectLink
+							:url="project.link_url"
+							hide-when-empty
 							class="inline-flex items-center gap-2 text-xs font-bold hover:text-white transition-colors"
 						>
 							<span class="text-emerald-900">[</span>
 							EXECUTE_VIEW
 							<span class="text-emerald-900">]</span>
-						</a>
+						</PortfolioProjectLink>
 					</div>
 				</div>
 			</section>

@@ -66,22 +66,12 @@ onMounted(() => {
 							}}
 						</p>
 					</div>
-					<div class="flex items-start gap-6">
-						<a
-							href="#"
-							class="group inline-flex items-center gap-3 rounded-full border border-slate-800 px-6 py-3 text-sm font-bold text-white transition-all hover:border-violet-500 hover:bg-violet-500/10"
-						>
-							Follow
-							<Icon name="ph:instagram-logo-bold" class="text-lg" />
-						</a>
-						<a
-							href="#"
-							class="group inline-flex items-center gap-3 rounded-full border border-slate-800 px-6 py-3 text-sm font-bold text-white transition-all hover:border-violet-500 hover:bg-violet-500/10"
-						>
-							Connect
-							<Icon name="ph:linkedin-logo-bold" class="text-lg" />
-						</a>
-					</div>
+					<PortfolioSocialLinks
+						:profile="profile"
+						mode="labels"
+						link-class="inline-flex items-center gap-3 rounded-full border border-slate-800 px-6 py-3 text-sm font-bold text-white transition-all hover:border-violet-500 hover:bg-violet-500/10"
+						class="items-start"
+					/>
 				</div>
 
 				<!-- Scroll indicator -->
@@ -163,14 +153,13 @@ onMounted(() => {
 							</div>
 
 							<!-- CTA -->
-							<a
-								v-if="project.link_url"
-								:href="project.link_url"
-								target="_blank"
+							<PortfolioProjectLink
+								:url="project.link_url"
+								hide-when-empty
 								class="group/btn inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-700 text-slate-500 transition-all hover:border-violet-500 hover:bg-violet-500 hover:text-white"
 							>
 								<Icon name="ph:arrow-up-right-bold" class="text-lg" />
-							</a>
+							</PortfolioProjectLink>
 						</div>
 					</div>
 				</div>
@@ -182,12 +171,11 @@ onMounted(() => {
 					<p class="text-xs font-black uppercase tracking-[0.35em] text-slate-600">
 						&copy; {{ new Date().getFullYear() }} Portobit — All rights reserved
 					</p>
-					<div class="flex gap-8 text-xs font-bold uppercase tracking-[0.25em] text-slate-600">
-						<a href="#" class="transition-colors hover:text-violet-400">Instagram</a>
-						<a href="#" class="transition-colors hover:text-violet-400">LinkedIn</a>
-						<a href="#" class="transition-colors hover:text-violet-400">Twitter</a>
-						<a href="#" class="transition-colors hover:text-violet-400">Dribbble</a>
-					</div>
+					<PortfolioSocialLinks
+						:profile="profile"
+						mode="labels"
+						link-class="text-xs font-bold uppercase tracking-[0.25em] text-slate-600 transition-colors hover:text-violet-400"
+					/>
 				</div>
 			</footer>
 		</div>
