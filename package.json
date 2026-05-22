@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@iconify-json/ph": "^1.2.2",
+    "@vercel/nft": "^1.5.0",
     "supabase": "^2.76.8"
   }
 }
