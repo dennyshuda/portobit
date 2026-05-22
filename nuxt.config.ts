@@ -26,6 +26,9 @@ export default defineNuxtConfig({
 			trace: false,
 		},
 	},
+	icon: {
+		mode: "local",
+	},
 	modules: ["@nuxtjs/tailwindcss", "@nuxtjs/supabase", "@pinia/nuxt", "@nuxt/icon"],
 	supabase: {
 		redirectOptions: {
