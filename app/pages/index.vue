@@ -35,12 +35,12 @@ const plans = [
 	},
 	{
 		name: "Pro",
-		price: "Segera",
-		description: "Untuk portofolio yang butuh branding dan kontrol lebih lengkap.",
+		price: "Rp10.000",
+		description: "Sekali bayar untuk membuka fitur Pro lifetime saat pembayaran production aktif.",
 		action: "Segera Hadir",
 		to: "",
 		highlight: true,
-		features: ["Template premium", "Tanpa branding Portobit", "Custom domain", "Analitik lanjutan"],
+		features: ["Akses lifetime", "Semua template premium", "Tanpa branding Portobit", "Custom social links"],
 	},
 ];
 </script>
@@ -149,7 +149,7 @@ const plans = [
 								v-if="plan.highlight"
 								class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white"
 							>
-								Roadmap
+								Lifetime
 							</span>
 						</div>
 						<p :class="['mt-4 text-sm leading-6', plan.highlight ? 'text-slate-300' : 'text-slate-600']">

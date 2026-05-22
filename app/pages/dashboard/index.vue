@@ -103,7 +103,7 @@ const metrics = computed(() => [
 	},
 	{
 		label: "Status Akun",
-		value: "Free",
+		value: portfolio.profile.is_pro ? "Pro" : "Free",
 		icon: "ph:shield-check-bold",
 		helper: "Paket aktif saat ini",
 	},

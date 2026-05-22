@@ -6,6 +6,37 @@ definePageMeta({ layout: "dashboard" });
 const portfolio = usePortfolioStore();
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
+const config = useRuntimeConfig();
+const isUpgradingPro = ref(false);
+const proPaymentsEnabled = false;
+
+declare global {
+	interface Window {
+		snap?: {
+			pay: (
+				token: string,
+				options?: {
+					onSuccess?: (result: { order_id?: string }) => void;
+					onPending?: (result: { order_id?: string }) => void;
+					onError?: (result: unknown) => void;
+					onClose?: () => void;
+				},
+			) => void;
+		};
+	}
+}
+
+useHead(() => ({
+	script: proPaymentsEnabled && config.public.midtransClientKey
+		? [
+				{
+					src: "https://app.sandbox.midtrans.com/snap/snap.js",
+					"data-client-key": config.public.midtransClientKey,
+					async: true,
+				},
+			]
+		: [],
+}));
 
 const availableTemplates = [
 	{
@@ -104,14 +135,7 @@ const publicProfilePath = computed(() => {
 	return username ? `/${username}` : "/dashboard/settings";
 });
 
-const selectTemplate = async (templateId: string, isPro: boolean) => {
-	if (portfolio.isLoading || activeTemplateName.value === templateId) return;
-
-	if (isPro) {
-		toast.info("Template Pro", { description: "Template ini akan tersedia untuk member Pro." });
-		return;
-	}
-
+const applyTemplate = async (templateId: string) => {
 	const userId = user.value?.sub;
 	if (!userId) {
 		toast.error("User tidak ditemukan. Silakan login ulang.");
@@ -137,6 +161,141 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 	} finally {
 		portfolio.isLoading = false;
 	}
+};
+
+const verifyProPayment = async (orderId?: string) => {
+	if (!orderId) {
+		toast.error("Order pembayaran tidak ditemukan.");
+		return;
+	}
+
+	const { data } = await supabase.auth.getSession();
+	const accessToken = data.session?.access_token;
+
+	if (!accessToken) {
+		toast.error("Sesi login habis. Silakan login ulang.");
+		return;
+	}
+
+	portfolio.isLoading = true;
+
+	try {
+		const result = await $fetch<{ isPro: boolean; transactionStatus?: string }>("/api/pro/verify", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+			body: {
+				order_id: orderId,
+			},
+		});
+
+		if (!result.isPro) {
+			toast.info("Pembayaran belum selesai", {
+				description: `Status Midtrans: ${result.transactionStatus || "pending"}.`,
+			});
+			return;
+		}
+
+		portfolio.profile.is_pro = true;
+		toast.success("Upgrade Pro berhasil.", {
+			description: "Semua template Pro sudah terbuka. Silakan pilih template yang kamu mau.",
+		});
+	} catch (error: any) {
+		toast.error("Gagal verifikasi pembayaran", {
+			description: error?.data?.statusMessage || error?.message || "Coba beberapa saat lagi.",
+		});
+	} finally {
+		portfolio.isLoading = false;
+		isUpgradingPro.value = false;
+	}
+};
+
+const startProUpgrade = async () => {
+	if (!import.meta.client) return;
+
+	if (!config.public.midtransClientKey) {
+		toast.error("MIDTRANS_CLIENT_KEY belum diset.");
+		return;
+	}
+
+	const { data } = await supabase.auth.getSession();
+	const accessToken = data.session?.access_token;
+
+	if (!accessToken) {
+		toast.error("Sesi login habis. Silakan login ulang.");
+		return;
+	}
+
+	isUpgradingPro.value = true;
+	portfolio.isLoading = true;
+
+	try {
+		const transaction = await $fetch<{ token?: string; alreadyPro?: boolean }>("/api/pro/create-transaction", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		});
+
+		if (transaction.alreadyPro) {
+			portfolio.profile.is_pro = true;
+			toast.success("Akun kamu sudah Pro.");
+			return;
+		}
+
+		if (!transaction.token) {
+			throw new Error("Snap token tidak diterima dari Midtrans.");
+		}
+
+		if (!window.snap) {
+			throw new Error("Snap.js belum siap. Refresh halaman lalu coba lagi.");
+		}
+
+		window.snap.pay(transaction.token, {
+			onSuccess: (result) => verifyProPayment(result.order_id),
+			onPending: (result) => {
+				isUpgradingPro.value = false;
+				portfolio.isLoading = false;
+				toast.info("Pembayaran masih pending", {
+					description: result.order_id ? "Selesaikan pembayaran di Midtrans." : "Cek kembali status pembayaranmu.",
+				});
+			},
+			onError: () => {
+				isUpgradingPro.value = false;
+				portfolio.isLoading = false;
+				toast.error("Pembayaran gagal diproses.");
+			},
+			onClose: () => {
+				isUpgradingPro.value = false;
+				portfolio.isLoading = false;
+			},
+		});
+	} catch (error: any) {
+		toast.error("Gagal membuka pembayaran", {
+			description: error?.data?.statusMessage || error?.message || "Coba beberapa saat lagi.",
+		});
+		isUpgradingPro.value = false;
+		portfolio.isLoading = false;
+	}
+};
+
+const selectTemplate = async (templateId: string, isPro: boolean) => {
+	if (portfolio.isLoading || activeTemplateName.value === templateId) return;
+
+	if (isPro && !portfolio.profile.is_pro) {
+		if (!proPaymentsEnabled) {
+			toast.info("Upgrade Pro belum dibuka", {
+				description: "Pembayaran production akan diaktifkan segera.",
+			});
+			return;
+		}
+
+		await startProUpgrade();
+		return;
+	}
+
+	await applyTemplate(templateId);
 };
 </script>
 
@@ -189,7 +348,7 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 							class="inline-flex items-center gap-1 rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-amber-300"
 						>
 							<Icon name="ph:crown-fill" />
-							Pro
+							{{ portfolio.profile.is_pro ? "Unlocked" : "Pro" }}
 						</span>
 						<span
 							v-if="activeTemplateName === template.id"
@@ -220,7 +379,17 @@ const selectTemplate = async (templateId: string, isPro: boolean) => {
 							name="ph:circle-notch-bold"
 							class="animate-spin"
 						/>
-						<span>{{ activeTemplateName === template.id ? "Digunakan" : "Pilih Template" }}</span>
+						<span>
+							{{
+								activeTemplateName === template.id
+									? "Digunakan"
+									: template.isPro && !portfolio.profile.is_pro
+										? isUpgradingPro
+											? "Membuka Pro..."
+											: "Segera Hadir"
+										: "Pilih Template"
+							}}
+						</span>
 					</button>
 				</div>
 			</article>
