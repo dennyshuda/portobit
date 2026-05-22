@@ -23,6 +23,15 @@ export default defineNuxtConfig({
 	},
 	compatibilityDate: "2025-07-15",
 	devtools: { enabled: true },
+	runtimeConfig: {
+		midtransServerKey: process.env.MIDTRANS_SERVER_KEY,
+		midtransMerchantId: process.env.MIDTRANS_MERCHANT_ID,
+		public: {
+			midtransClientKey: process.env.MIDTRANS_CLIENT_KEY,
+			siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+			proPrice: 10000,
+		},
+	},
 	nitro: {
 		externals: {
 			// Keep Vercel tracing enabled so serverless functions include runtime dependencies.
